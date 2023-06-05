@@ -1,10 +1,12 @@
 # Reset password
+
 - flow
-send code to email
-verify code
-save new password
-
-
+  send code to email
+  verify code
+  save new password
 
 # TODO
+
 validations for all apis
+
+

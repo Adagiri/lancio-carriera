@@ -63,8 +63,7 @@ module.exports.sendAccountActivationEmailForCompany = async ({
   }
 };
 
-module.exports.sendResetPasswordEmailForUser = async (email, token) => {
-  const USER_WEBSITE_HOSTNAME = process.env.USER_WEBSITE_HOSTNAME;
+module.exports.sendResetPasswordEmailForUser = async (email, code) => {
   const message = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,8 +73,37 @@ module.exports.sendResetPasswordEmailForUser = async (email, token) => {
     <title>Moniedrop</title>
 </head>
 <body>
-    <p>Hi, please click the link below to reset your password. However, if you did not initiate a reset password request, please ignore this mail</p>
-    <p><a href='${USER_WEBSITE_HOSTNAME}/reset-password/${token}'>Reset Password</a></p>
+    <p>Hi, please use the code below to reset your password. However, if you did not initiate a reset password request, please ignore this mail</p>
+    <p>>${code}</a></p>
+    <p>Please note that link expires in 10 minutes</p>
+</body>
+</html>`;
+
+  try {
+    const emailArgs = generateEmailArguments(
+      null,
+      email,
+      'Reset your Password',
+      message
+    );
+    await sendEmail(emailArgs);
+  } catch (error) {
+    console.log(error, 'error from activation email');
+  }
+};
+
+module.exports.sendResetPasswordEmailForCompany = async (email, code) => {
+  const message = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moniedrop</title>
+</head>
+<body>
+    <p>Hi, please use the code below to reset your password. However, if you did not initiate a reset password request, please ignore this mail</p>
+    <p>>${code}</a></p>
     <p>Please note that link expires in 10 minutes</p>
 </body>
 </html>`;

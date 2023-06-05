@@ -70,6 +70,10 @@ const UserSchema = new mongoose.Schema({
   accountActivationCode: String,
   accountActivationTokenExpiry: Date,
 
+  resetPasswordToken: String,
+  resetPasswordCode: String,
+  resetPasswordTokenExpiry: Date,
+
   createdAt: {
     type: Date,
     default: Date.now,

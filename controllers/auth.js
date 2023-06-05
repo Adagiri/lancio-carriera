@@ -7,6 +7,8 @@ const {
   sendWelcomeEmailForUser,
   sendAccountActivationEmailForCompany,
   sendWelcomeEmailForCompany,
+  sendResetPasswordEmailForCompany,
+  sendResetPasswordEmailForUser,
 } = require('../utils/messages');
 const {
   generateVerificationCode,
@@ -306,7 +308,7 @@ module.exports.loginWithGoogle = asyncHandler(async (req, res, next) => {
     isAccountActivated: true,
   });
 
-  console.log(user)
+  console.log(user);
   if (!user) {
     return next(
       new ErrorResponse(400, {
@@ -333,6 +335,145 @@ module.exports.loginWithGoogle = asyncHandler(async (req, res, next) => {
       user: user,
     });
   }
+});
+
+module.exports.sendResetPasswordCode = asyncHandler(async (req, res, next) => {
+  const args = req.body;
+  const { accountType, email } = args;
+
+  // validate arguments
+  const model = accountType === 'company' ? Company : User;
+
+  const user = await model.findOne({ email: email, registeredWith: 'email' });
+
+  if (!user) {
+    return next(
+      new ErrorResponse(400, {
+        messageEn: 'No account with such email',
+        messageGe: 'Kein Konto mit einer solchen E-Mail',
+      })
+    );
+  }
+
+  const { token, encryptedToken, tokenExpiry, code } = generateVerificationCode(
+    20,
+    10
+  );
+
+  user.resetPasswordCode = code;
+  user.resetPasswordToken = encryptedToken;
+  user.resetPasswordTokenExpiry = tokenExpiry;
+  await user.save();
+
+  if (accountType === 'company') {
+    await sendResetPasswordEmailForCompany(email, code);
+  } else {
+    await sendResetPasswordEmailForUser(email, code);
+  }
+
+  // Send email
+  return res.status(200).json({
+    success: true,
+    token: token,
+  });
+});
+
+module.exports.verifyResetPasswordCode = asyncHandler(
+  async (req, res, next) => {
+    const args = req.body;
+    const { accountType } = args;
+    // validate arguments
+    const model = accountType === 'company' ? Company : User;
+    const encryptedToken = getEncryptedToken(args.token);
+
+    const user = await model.findOne({
+      resetPasswordToken: encryptedToken,
+    });
+
+    console.log(user);
+
+    if (!user) {
+      return next(
+        new ErrorResponse(404, {
+          messageEn: 'Invalid token',
+          messageGe: 'Ungültiges Token',
+        })
+      );
+    }
+
+    if (new Date(user.resetPasswordTokenExpiry) < new Date()) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordCode = undefined;
+      user.resetPasswordTokenExpiry = undefined;
+      await user.save();
+      return next(
+        new ErrorResponse(400, {
+          messageEn: 'Reset password session expired',
+          messageGe:
+            'Die Sitzung zum Zurücksetzen des Passworts ist abgelaufen',
+        })
+      );
+    }
+
+    if (user.resetPasswordCode !== args.code) {
+      return next(
+        new ErrorResponse(400, {
+          messageEn: 'Incorrect code',
+          messageGe: 'Falscher Code',
+        })
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      token: args.token,
+    });
+  }
+);
+
+module.exports.resetPassword = asyncHandler(async (req, res, next) => {
+  const args = req.body;
+  const { accountType } = args;
+  // validate arguments
+  const model = accountType === 'company' ? Company : User;
+  const encryptedToken = getEncryptedToken(args.token);
+
+  const user = await model.findOne({
+    resetPasswordToken: encryptedToken,
+  });
+
+  if (!user) {
+    return next(
+      new ErrorResponse(404, {
+        messageEn: 'Invalid token',
+        messageGe: 'Ungültiges Token',
+      })
+    );
+  }
+
+  if (new Date(user.resetPasswordTokenExpiry) < new Date()) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordCode = undefined;
+    user.resetPasswordTokenExpiry = undefined;
+    await user.save();
+    return next(
+      new ErrorResponse(400, {
+        messageEn: 'Reset password session expired',
+        messageGe: 'Die Sitzung zum Zurücksetzen des Passworts ist abgelaufen',
+      })
+    );
+  }
+
+  user.password = await generateEncryptedPassword(args.password);
+  user.resetPasswordToken = undefined;
+  user.resetPasswordCode = undefined;
+  user.resetPasswordTokenExpiry = undefined;
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+  });
 });
 
 module.exports.deleteAccount = asyncHandler(async (req, res, next) => {
