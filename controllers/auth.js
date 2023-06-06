@@ -258,6 +258,8 @@ module.exports.loginWithEmail = asyncHandler(async (req, res, next) => {
     })
     .select('+password');
 
+  console.log('user', user);
+
   if (!user) {
     return next(
       new ErrorResponse(400, {
@@ -344,7 +346,11 @@ module.exports.sendResetPasswordCode = asyncHandler(async (req, res, next) => {
   // validate arguments
   const model = accountType === 'company' ? Company : User;
 
-  const user = await model.findOne({ email: email, registeredWith: 'email' });
+  const user = await model.findOne({
+    email: email,
+    registeredWith: 'email',
+    isAccountActivated: true,
+  });
 
   if (!user) {
     return next(
