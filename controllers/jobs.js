@@ -1,4 +1,4 @@
-const asyncHandler = require('../models/middlewares/async');
+const asyncHandler = require('../middlewares/async');
 const Job = require('../models/Job');
 
 module.exports.getCompanyJobs = asyncHandler(async (req, res, next) => {

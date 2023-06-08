@@ -1,4 +1,4 @@
-const asyncHandler = require('../models/middlewares/async');
+const asyncHandler = require('../middlewares/async');
 const ErrorResponse = require('../utils/errorResponse');
 const { getS3SignedUrl } = require('../utils/fileUploads');
 const { generateRandomNumbers } = require('../utils/general');

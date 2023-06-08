@@ -11,8 +11,8 @@ const {
   deleteAccount,
   resetPassword,
 } = require('../controllers/auth');
-const advancedResults = require('../models/middlewares/advancedResults');
-const { protect, admin } = require('../models/middlewares/auth');
+const advancedResults = require('../middlewares/advancedResults');
+const { protect, admin } = require('../middlewares/auth');
 const router = express.Router();
 
 router.post('/account/email', registerWithEmail);

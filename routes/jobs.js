@@ -1,7 +1,7 @@
 const express = require('express');
 
 const { getCompanyJobs, postJob } = require('../controllers/jobs');
-const { protectCompany } = require('../models/middlewares/auth');
+const { protectCompany } = require('../middlewares/auth');
 const router = express.Router();
 
 router.get('/company', protectCompany, getCompanyJobs);

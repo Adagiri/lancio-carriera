@@ -9,7 +9,7 @@ const {
   profileSetupStepFour,
   profileSetup,
 } = require('../controllers/users');
-const { protectUser } = require('../models/middlewares/auth');
+const { protectUser } = require('../middlewares/auth');
 const router = express.Router();
 
 router.get('/logged-in-account', protectUser, getLoggedInUser);
