@@ -7,7 +7,7 @@ const {
   profileSetupStepTwo,
   profileSetupStepThree,
 } = require('../controllers/companies');
-const {  protectCompany } = require('../middlewares/auth');
+const { protectCompany } = require('../models/middlewares/auth');
 const router = express.Router();
 
 router.get('/logged-in-account', protectCompany, getLoggedInCompany);

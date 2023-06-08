@@ -6,7 +6,7 @@ const morgan = require('morgan');
 const colors = require('colors');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const errorHandler = require('./middlewares/error');
+const errorHandler = require('./models/middlewares/error');
 const http = require('http');
 const jobs = require('./routes/jobs');
 const auth = require('./routes/auth');
@@ -38,6 +38,10 @@ if (process.env.NODE_ENV === 'development') {
 // app.use(express.static(path.join(__dirname, 'public')));
 
 const httpServer = http.Server(app);
+
+app.get('/', (req, res) => {
+  return res.send('Hello there!');
+});
 
 // Mount routers
 app.use('/api/v1/jobs', jobs);
