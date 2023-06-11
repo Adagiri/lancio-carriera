@@ -33,6 +33,7 @@
     "slugify": "^1.6.4",
     "socket.io": "^4.4.1",
     "south-african-id-validator": "^1.0.1",
+    "swagger-ui-express": "^4.6.3",
     "tinyurl": "^1.1.7",
     "unique-random": "^2.1.0"
   }

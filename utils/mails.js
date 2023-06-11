@@ -4,7 +4,7 @@ const mainEmail = process.env.MAIN_EMAIL;
 
 const createEmailParam = (from, to, subject, message) => {
   if (!from) {
-    from = `Jaami'ah <${mainEmail}>`;
+    from = `Lancio Carriera <${mainEmail}>`;
   }
 
   return {
@@ -24,7 +24,7 @@ const createEmailParam = (from, to, subject, message) => {
       },
     },
     Source: from,
-    ReplyToAddresses: ['no-reply@evens.io'],
+    ReplyToAddresses: ['no-reply@lanciocarriera.com'],
   };
 };
 

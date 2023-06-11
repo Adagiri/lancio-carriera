@@ -14,7 +14,7 @@ const sns = new AWS.SNS({
 });
 
 const ses = new AWS.SES({
-  region: 'us-east-1',
+  region: 'us-east-2',
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_KEY,

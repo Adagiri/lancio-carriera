@@ -14,6 +14,9 @@ const users = require('./routes/users');
 const companies = require('./routes/companies');
 const fileUploads = require('./routes/fileUploads');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
 const { connectDB } = require('./config/db');
 
 dotenv.config({ path: './config/config.env' });
@@ -42,6 +45,8 @@ const httpServer = http.Server(app);
 app.get('/', (req, res) => {
   return res.send('Hello there!');
 });
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Mount routers
 app.use('/api/v1/jobs', jobs);

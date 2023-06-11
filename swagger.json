@@ -1,0 +1,621 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Lancio Carriera",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://lancio.us-east-1.elasticbeanstalk.com/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication"
+    },
+    {
+      "name": "User"
+    },
+    {
+      "name": "Company"
+    },
+    {
+      "name": "File Uploads"
+    },
+    {
+      "name": "Jobs"
+    }
+  ],
+  "paths": {
+    "/auth/account/email": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Signup via email & password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "first_name": "Ridwan",
+                  "last_name": "Aduvoh",
+                  "company_name": "neurona",
+                  "email": "ibrahimridwan47@gmail.com",
+                  "password": "password",
+                  "accountType": "company"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/account/verify": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Verify email",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accountType": "company",
+                  "token": "56d150dd850141d572a0087b0a167932e9ba3089",
+                  "code": "1712"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/account/google": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Signup via google",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "idToken": "123456778899",
+                  "email": "adagiri1@gmail.com",
+                  "company_name": "neurona",
+                  "accountType": "company"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/session/email": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login via email & password Copy",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accountType": "company",
+                  "email": "krowdee20@gmail.com",
+                  "password": "password5"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/session/google": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login via google",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accountType": "company",
+                  "idToken": "123456778899"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password/send-code": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Reset password - Send code",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accountType": "company",
+                  "email": "krowdee20@gmail.com"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password/verify-code": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Reset password - Verify code",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accountType": "company",
+                  "code": "6184",
+                  "token": "358e55ab6b34553c7e5155868d344ede75cc9955"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password/set-password": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Reset password - Set password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accountType": "company",
+                  "password": "password5",
+                  "token": "358e55ab6b34553c7e5155868d344ede75cc9955"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/delete": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Delete user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "accountType": "company",
+                  "email": "adagiri1@gmail.com"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users/logged-in-account": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get logged-In user",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NzkwZGI1ZjE3NGU2YmY2MTlkMWI0NiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3QGdtYWlsLmNvbSIsImlhdCI6MTY4NTc0OTcwMywiZXhwIjoxNjg4MzQxNzAzfQ.YpCeTbE8GURevm2MMijRCdBOdGQ4IlRWsnsJVXUnQrU"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users/profile-setup": {
+      "put": {
+        "tags": ["User"],
+        "summary": "Profile setup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "sex": "male",
+                  "age": 30,
+                  "phone": "+2348037296906",
+                  "country": "Germany",
+                  "state": "Berlin",
+                  "city": "Berlin",
+                  "address": "Musterstraße 42, 10115 Berlin, Germany",
+                  "photo": "https://lancio-carriera.s3.amazon.com/profile-photo/0299292828828828",
+                  "bio": "THis is my bio",
+                  "resume": [
+                    "https://lancio-carriera.s3.amazon.com/resume/0299292828828828"
+                  ],
+                  "softSkills": ["speaking", "reading", "honesty"]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NzkwZGI1ZjE3NGU2YmY2MTlkMWI0NiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3QGdtYWlsLmNvbSIsImlhdCI6MTY4NTc0OTcwMywiZXhwIjoxNjg4MzQxNzAzfQ.YpCeTbE8GURevm2MMijRCdBOdGQ4IlRWsnsJVXUnQrU"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/companies/logged-in-account": {
+      "get": {
+        "tags": ["Company"],
+        "summary": "Get logged-In company",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0N2E3OTczY2Y2ODU5ZWEzZjNhZDQ4MiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2ODU3NTMwNTgsImV4cCI6MTY4ODM0NTA1OH0.qgoo0ioMZKqyNwCY9s5Aql6xv9FwHnpwp5liNKamNV0"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/companies/profile-setup": {
+      "put": {
+        "tags": ["Company"],
+        "summary": "Profile setup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "companyType": "Technology",
+                  "employeeCount": "0 - 50",
+                  "phone": "+2348037296906",
+                  "country": "Germany",
+                  "state": "Berlin",
+                  "city": "Berlin",
+                  "address": "Musterstraße 42, 10115 Berlin, Germany",
+                  "photo": "https://lancio-carriera.s3.amazon.com/profile-photo/0299292828828828",
+                  "bio": "THis is our bio",
+                  "businessDoc": [
+                    "https://lancio-carriera.s3.amazon.com/business-doc/0299292828828828.jpeg",
+                    "https://lancio-carriera.s3.amazon.com/business-doc/0299292828828820.jpeg"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0N2E3OTczY2Y2ODU5ZWEzZjNhZDQ4MiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2ODU3NTMwNTgsImV4cCI6MTY4ODM0NTA1OH0.qgoo0ioMZKqyNwCY9s5Aql6xv9FwHnpwp5liNKamNV0"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/file-uploads/request-upload-url": {
+      "get": {
+        "tags": ["File Uploads"],
+        "summary": "Get signed url for upload",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0N2E3OTczY2Y2ODU5ZWEzZjNhZDQ4MiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2ODU3NTMwNTgsImV4cCI6MTY4ODM0NTA1OH0.qgoo0ioMZKqyNwCY9s5Aql6xv9FwHnpwp5liNKamNV0"
+          },
+          {
+            "name": "purpose",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "possible values include: profile-photo, resume, business-doc",
+            "example": "profile-photo"
+          },
+          {
+            "name": "contentType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "possible values include: image/jpeg, image/png, ...",
+            "example": "image/jpeg"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/test/profile-photo/439444875247155986489417163849.jpeg": {
+      "put": {
+        "tags": ["File Uploads"],
+        "summary": "Upload file to signed url",
+        "requestBody": {
+          "content": {
+            "text/plain": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "image/jpeg"
+          },
+          {
+            "name": "AWSAccessKeyId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "AKIAZIFTYRZJNBP2VGM4"
+          },
+          {
+            "name": "Content-Type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "image%2Fjpeg"
+          },
+          {
+            "name": "Expires",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "1685823544"
+          },
+          {
+            "name": "Signature",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "ARxixoVjrW8QPely9c8I3KqsAek%3D"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs/company": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "Get loggedin company's jobs",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0N2E3OTczY2Y2ODU5ZWEzZjNhZDQ4MiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2ODU3NTMwNTgsImV4cCI6MTY4ODM0NTA1OH0.qgoo0ioMZKqyNwCY9s5Aql6xv9FwHnpwp5liNKamNV0"
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "null"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "3"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs": {
+      "post": {
+        "tags": ["Jobs"],
+        "summary": "Post a Job",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "position": "Senior Research Assistant",
+                  "type": "Vertrag",
+                  "about": "Some description here",
+                  "salary": "1000 - 1500",
+                  "requirements": [
+                    "High school diploma",
+                    "Farmiliarity with sales",
+                    "Willingness to learn"
+                  ],
+                  "responsibilities": [
+                    "Reach out to customers",
+                    "Gather customer feedbacks"
+                  ],
+                  "isHiringUrgently": true,
+                  "allowMultipleCandidate": false
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0N2JiZjQ5M2NlZGQzODAyZTc5OGY0ZCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3QGdtYWlsLmNvbSIsImlhdCI6MTY4NTgzMTUwMCwiZXhwIjoxNjg4NDIzNTAwfQ.46jrDbW5_70dQbdjVnKTh_FXQQH955nvQ-BECbe3r3U"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}
