@@ -25,7 +25,9 @@ module.exports.protectUser = asyncHandler(async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.user = await User.findById(decoded.id);
+    req.user = await User.findById(decoded.id).select(
+      'firstName lastName email registeredWith'
+    );
 
     if (!req.user) {
       return next(
@@ -35,6 +37,7 @@ module.exports.protectUser = asyncHandler(async (req, res, next) => {
         })
       );
     }
+    req.user.id = req.user._id;
 
     next();
   } catch (err) {
@@ -69,8 +72,10 @@ module.exports.protectCompany = asyncHandler(async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.company = await Company.findById(decoded.id);
-    if (!req.company) {
+    req.user = await Company.findById(decoded.id).select(
+      'company_name email registeredWith'
+    );
+    if (!req.user) {
       return next(
         new ErrorResponse(403, {
           messageEn: 'You are not authorized',
@@ -78,6 +83,8 @@ module.exports.protectCompany = asyncHandler(async (req, res, next) => {
         })
       );
     }
+
+    req.user.id = req.user._id;
 
     next();
   } catch (err) {
@@ -122,6 +129,11 @@ module.exports.protect = asyncHandler(async (req, res, next) => {
         })
       );
     }
+
+    user && (req.user = user);
+    company && (req.user = company);
+
+    req.user.id = req.user._id;
 
     next();
   } catch (err) {

@@ -3,7 +3,7 @@ const ErrorResponse = require('../utils/errorResponse.js');
 const User = require('../models/User');
 
 module.exports.getLoggedInUser = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user.id);
   return res.status(200).json(user);
 });
 
@@ -12,7 +12,7 @@ module.exports.profileSetup = asyncHandler(async (req, res, next) => {
   // validate arguments
 
   args.isProfileSetupComplete = true;
-  const user = await User.findByIdAndUpdate(req.user._id, args, {
+  const user = await User.findByIdAndUpdate(req.user.id, args, {
     new: true,
   });
 
@@ -27,7 +27,7 @@ module.exports.profileSetupStepOne = asyncHandler(async (req, res, next) => {
   // validate arguments
 
   args.isStepOneProfileSetupComplete = true;
-  const user = await User.findByIdAndUpdate(req.user._id, args, { new: true });
+  const user = await User.findByIdAndUpdate(req.user.id, args, { new: true });
 
   return res.status(200).json({
     success: true,
@@ -40,7 +40,7 @@ module.exports.profileSetupStepTwo = asyncHandler(async (req, res, next) => {
   // validate arguments
 
   args.isStepTwoProfileSetupComplete = true;
-  const user = await User.findByIdAndUpdate(req.user._id, args, { new: true });
+  const user = await User.findByIdAndUpdate(req.user.id, args, { new: true });
 
   return res.status(200).json({
     success: true,
@@ -53,7 +53,7 @@ module.exports.profileSetupStepThree = asyncHandler(async (req, res, next) => {
   // validate arguments
 
   args.isStepThreeProfileSetupComplete = true;
-  const user = await User.findByIdAndUpdate(req.user._id, args, { new: true });
+  const user = await User.findByIdAndUpdate(req.user.id, args, { new: true });
 
   return res.status(200).json({
     success: true,
@@ -67,7 +67,7 @@ module.exports.profileSetupStepFour = asyncHandler(async (req, res, next) => {
 
   args.isStepFourProfileSetupComplete = true;
   args.isProfileSetupComplete = true;
-  const user = await User.findByIdAndUpdate(req.user._id, args, { new: true });
+  const user = await User.findByIdAndUpdate(req.user.id, args, { new: true });
 
   return res.status(200).json({
     success: true,

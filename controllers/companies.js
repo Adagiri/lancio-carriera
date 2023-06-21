@@ -4,7 +4,7 @@ const User = require('../models/User');
 const Company = require('../models/Company');
 
 module.exports.getLoggedInCompany = asyncHandler(async (req, res, next) => {
-  const company = await Company.findById(req.company._id);
+  const company = await Company.findById(req.user.id);
   return res.status(200).json(company);
 });
 
@@ -13,7 +13,7 @@ module.exports.profileSetup = asyncHandler(async (req, res, next) => {
   // validate arguments
 
   args.isProfileSetupComplete = true;
-  const company = await Company.findByIdAndUpdate(req.company._id, args, {
+  const company = await Company.findByIdAndUpdate(req.user.id, args, {
     new: true,
   });
 
@@ -28,7 +28,7 @@ module.exports.profileSetupStepOne = asyncHandler(async (req, res, next) => {
   // validate arguments
 
   args.isStepOneProfileSetupComplete = true;
-  const company = await Company.findByIdAndUpdate(req.company._id, args, {
+  const company = await Company.findByIdAndUpdate(req.user.id, args, {
     new: true,
   });
 
@@ -43,7 +43,7 @@ module.exports.profileSetupStepTwo = asyncHandler(async (req, res, next) => {
   // validate arguments
 
   args.isStepTwoProfileSetupComplete = true;
-  const company = await Company.findByIdAndUpdate(req.company._id, args, {
+  const company = await Company.findByIdAndUpdate(req.user.id, args, {
     new: true,
   });
 
@@ -60,7 +60,7 @@ module.exports.profileSetupStepThree = asyncHandler(async (req, res, next) => {
   args.isStepThreeProfileSetupComplete = true;
   args.isProfileSetupComplete = true;
 
-  const company = await Company.findByIdAndUpdate(req.company._id, args, {
+  const company = await Company.findByIdAndUpdate(req.user.id, args, {
     new: true,
   });
 

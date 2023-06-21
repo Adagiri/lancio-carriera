@@ -10,7 +10,28 @@ const JobSchema = new mongoose.Schema({
   responsibilities: { type: [String], required: true },
   isHiringUrgently: { type: Boolean, required: true },
   allowMultipleCandidate: { type: Boolean, required: true },
-
+  applicantsCount: {
+    type: Number,
+    default: 0,
+  },
+  applicants: [
+    {
+      profile: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
+      coverLetter: { type: String, required: true },
+      resume: { type: [String], required: true },
+      createdAt: { type: Date, default: Date.now },
+      status: {
+        type: String,
+        default: 'Pending',
+        enum: ['Pending', 'Accepted'],
+      },
+    },
+  ],
+  hasAppliedTo: Boolean,
   createdAt: {
     type: Date,
     default: Date.now,

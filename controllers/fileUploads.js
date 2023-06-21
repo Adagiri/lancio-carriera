@@ -3,8 +3,19 @@ const ErrorResponse = require('../utils/errorResponse');
 const { getS3SignedUrl } = require('../utils/fileUploads');
 const { generateRandomNumbers } = require('../utils/general');
 
+const purposes = ['profile-photo', 'resume']
+
 module.exports.requestFileUploadUrl = asyncHandler(async (req, res, next) => {
   const { purpose, contentType } = req.query;
+
+  if (purposes.indexOf(purpose) === -1) {
+    return next(
+      new ErrorResponse(400, {
+        messageEn: "An Invalid value was passed for: 'purpose'",
+        messageGe: 'Für „Zweck“ wurde ein ungültiger Wert übergeben.',
+      })
+    );
+  }
 
   if (purpose === 'profile-photo') {
     if (['image/jpeg', 'image/png'].indexOf(contentType) === -1) {
