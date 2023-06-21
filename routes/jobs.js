@@ -8,11 +8,13 @@ const {
   getJobById,
   applyToJob,
   acceptApplicant,
+  getUserJobs,
 } = require('../controllers/jobs');
 const { protectCompany, protectUser, protect } = require('../middlewares/auth');
 const router = express.Router();
 
 router.get('/company', protectCompany, getCompanyJobs);
+router.get('/user', protectUser, getUserJobs);
 router.get('/', protect, getJobs);
 router.get('/:id', protect, getJobById);
 
