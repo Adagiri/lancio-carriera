@@ -10,6 +10,8 @@ const JobSchema = new mongoose.Schema({
   responsibilities: { type: [String], required: true },
   isHiringUrgently: { type: Boolean, required: true },
   allowMultipleCandidate: { type: Boolean, required: true },
+  isClosed: { type: Boolean, default: false },
+  isRemote: { type: Boolean, default: false },
   applicantsCount: {
     type: Number,
     default: 0,
@@ -31,7 +33,6 @@ const JobSchema = new mongoose.Schema({
       },
     },
   ],
-  hasAppliedTo: Boolean,
   createdAt: {
     type: Date,
     default: Date.now,

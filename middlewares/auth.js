@@ -85,7 +85,6 @@ module.exports.protectCompany = asyncHandler(async (req, res, next) => {
     }
 
     req.user.id = req.user._id;
-
     next();
   } catch (err) {
     console.log(err);

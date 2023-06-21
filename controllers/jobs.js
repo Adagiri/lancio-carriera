@@ -14,10 +14,10 @@ module.exports.getJobs = asyncHandler(async (req, res, next) => {
   const cursor = query.cursor;
   const limit = Math.abs(Number(query.limit)) || 10;
 
-  let data = await Job.find()
-    .sort({ _id: -1 })
-    .populate('company')
-    .populate('applicants.profile', 'firstName lastName photo');
+  let data = await Job.find().sort({ _id: -1 }).populate('company').populate({
+    path: 'applicants.profile',
+    select: 'first_name last_name photo',
+  });
   // Sort the list
   data = data.sort((a, b) => b.createdAt - a.createdAt);
 
@@ -41,9 +41,10 @@ module.exports.getJobs = asyncHandler(async (req, res, next) => {
 module.exports.getJobById = asyncHandler(async (req, res, next) => {
   const jobId = req.params.id;
 
-  const job = await Job.findById(jobId)
-    .populate('company')
-    .populate('applicants.profile');
+  let job = await Job.findById(jobId).populate('company').populate({
+    path: 'applicants.profile',
+    select: 'first_name last_name age photo country state city',
+  });
 
   if (!job) {
     return next(
@@ -54,7 +55,7 @@ module.exports.getJobById = asyncHandler(async (req, res, next) => {
     );
   }
 
-  console.log(job.applicants);
+  job = job.toObject();
 
   const applicantsIds = job.applicants
     .filter((applicant) => applicant.profile !== null)
@@ -62,6 +63,8 @@ module.exports.getJobById = asyncHandler(async (req, res, next) => {
 
   if (isAnApplicant(applicantsIds, req.user.id)) {
     job.hasAppliedTo = true;
+  } else {
+    job.hasAppliedTo = false;
   }
 
   return res.json({
@@ -72,15 +75,23 @@ module.exports.getJobById = asyncHandler(async (req, res, next) => {
 
 module.exports.getCompanyJobs = asyncHandler(async (req, res, next) => {
   const query = req.query;
-
+  console.log(query);
   const cursor = query.cursor;
   const limit = Math.abs(Number(query.limit)) || 10;
 
+  const filter = { ...query };
+  delete filter.limit;
+  delete filter.cursor;
+  console.log(req.user.id, 'req.user.id');
   let data = await Job.find({
     company: req.user.id,
+    ...filter,
   })
     .populate('company')
-    .populate('applicants.profile', 'firstName lastName photo');
+    .populate({
+      path: 'applicants.profile',
+      select: 'first_name last_name photo',
+    });
   // Sort the list
   data = data.sort((a, b) => b.createdAt - a.createdAt);
 
@@ -113,6 +124,32 @@ module.exports.postJob = asyncHandler(async (req, res, next) => {
   return res.status(201).json({ success: true, job: job });
 });
 
+module.exports.editJob = asyncHandler(async (req, res, next) => {
+  const args = req.body;
+  const jobId = args.jobId;
+  // validate arguments
+
+  let job = await Job.findByIdAndUpdate(jobId, args, { new: true })
+    .populate('company')
+    .populate(
+      'applicants.profile',
+      'first_name last_name age photo country state city'
+    );
+
+  if (!job) {
+    return next(
+      new ErrorResponse(404, {
+        messageEn: `Job with the ID: ${jobId} was not found`,
+        messageGe: `Job mit der ID: ${jobId} wurde nicht gefunden`,
+      })
+    );
+  }
+
+  console.log(args, job);
+
+  return res.status(200).json({ success: true, job: job });
+});
+
 module.exports.applyToJob = asyncHandler(async (req, res, next) => {
   const args = req.body;
   const userId = req.user.id;
@@ -129,7 +166,9 @@ module.exports.applyToJob = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (job.applicants.findIndex((applicant) => applicant.profile === userId)) {
+  if (
+    job.applicants.findIndex((applicant) => applicant.profile === userId) !== -1
+  ) {
     return next(
       new ErrorResponse(404, {
         messageEn: `You already applied for this job`,
