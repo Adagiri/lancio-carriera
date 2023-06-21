@@ -191,3 +191,71 @@ module.exports.applyToJob = asyncHandler(async (req, res, next) => {
 
   return res.status(200).json({ success: true, job: job });
 });
+
+module.exports.acceptApplicant = asyncHandler(async (req, res, next) => {
+  const args = req.body;
+  const userId = req.user.id;
+  const jobId = args.jobId;
+  const applicantId = args.applicantId;
+  // validate arguments
+  const job = await Job.findById(jobId).populate('company').populate({
+    path: 'applicants.profile',
+    select: 'first_name last_name age photo country state city',
+  });
+
+  // Job Exists or Not
+  if (!job) {
+    return next(
+      new ErrorResponse(404, {
+        messageEn: `Job with the ID: ${jobId} was not found`,
+        messageGe: `Job mit der ID: ${jobId} wurde nicht gefunden`,
+      })
+    );
+  }
+
+  // LoggedIn User is Authorized or Not
+  if (job.company._id.toString() !== userId) {
+    return next(
+      new ErrorResponse(403, {
+        messageEn: 'You are not authorized',
+        messageGe: 'Sie sind nicht berechtigt',
+      })
+    );
+  }
+
+  // An Applicant has Already been Accepted or Not
+  if (job.applicants.find((applicant) => applicant.status === 'Accepted')) {
+    return next(
+      new ErrorResponse(400, {
+        messageEn: `You have already accepted an applicant`,
+        messageGe: `Sie haben bereits einen Bewerber angenommen`,
+      })
+    );
+  }
+
+  const applicantIndex = job.applicants.findIndex(
+    (applicant) => applicant.profile._id.toString() === applicantId
+  );
+
+  if (applicantIndex === -1) {
+    return next(
+      new ErrorResponse(404, {
+        messageEn: `Applicant-ID: ${applicantId} does not belong to an applicant on this Job posting`,
+        messageGe: `Bewerber-ID: ${applicantId} gehört keinem Bewerber in dieser Stellenausschreibung`,
+      })
+    );
+  }
+
+  // Change Chosen Applicant's Status to Accepted
+  job.applicants = job.applicants.map((applicant) => {
+    if (applicant.profile._id.toString() === applicantId) {
+      applicant.status = 'Accepted';
+    }
+
+    return applicant;
+  });
+
+  await job.save();
+
+  return res.status(200).json({ success: true, job: job });
+});

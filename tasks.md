@@ -1,10 +1,3 @@
-# New Tasks
-
-Company - Close Job application (api)
-Applications
-Profile views
-totalJobsApplied
-
 _User_
 
 # Dashboard information
@@ -15,8 +8,6 @@ total jobs applied (weekly)
   profile views (total, this month, this week, today) (this week - (mon-sun partition) , this month - (days partition)) (recent companies, total companies count)
 - profile views (get)
   recently posted job (10 count)
-
-# Other apis
 
 _Company_
 
@@ -30,11 +21,6 @@ on a timed bases (weekly, monthly, today & all time), the 2 fields below will ch
 - View New applicants (users with the job-tagged)
   Recent job post
 
-# Other apis
-
-accept applicant
-
-_Job Apis_
 
 # TODO
 
