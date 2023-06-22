@@ -26,7 +26,7 @@ module.exports.protectUser = asyncHandler(async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     req.user = await User.findById(decoded.id).select(
-      'firstName lastName email registeredWith'
+      'firstName lastName email registeredWith accountType'
     );
 
     if (!req.user) {
@@ -73,7 +73,7 @@ module.exports.protectCompany = asyncHandler(async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     req.user = await Company.findById(decoded.id).select(
-      'company_name email registeredWith'
+      'company_name email registeredWith accountType'
     );
     if (!req.user) {
       return next(
@@ -117,8 +117,12 @@ module.exports.protect = asyncHandler(async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    const company = await Company.findById(decoded.id).select('_id');
-    const user = await User.findById(decoded.id).select('_id');
+    const company = await Company.findById(decoded.id).select(
+      '_id company_name email registeredWith accountType first_name last_name'
+    );
+    const user = await User.findById(decoded.id).select(
+      '_id company_name email registeredWith accountType first_name last_name'
+    );
 
     if (!company && !user) {
       return next(

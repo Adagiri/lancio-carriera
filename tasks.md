@@ -2,12 +2,6 @@ _User_
 
 # Dashboard information
 
-total jobs applied (weekly)
-
-- jobs applied (get)
-  profile views (total, this month, this week, today) (this week - (mon-sun partition) , this month - (days partition)) (recent companies, total companies count)
-- profile views (get)
-
 _Company_
 
 # Dashboard information
