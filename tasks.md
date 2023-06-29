@@ -1,6 +1,5 @@
-_User_
 
-# Dashboard information
+
 
 _Company_
 
