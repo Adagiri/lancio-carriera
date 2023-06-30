@@ -34,14 +34,13 @@ const getTotalApplicationsCount = async (userId, currentTime) => {
 };
 
 const getJobPostsCount = async (userId, currentTime) => {
+  console.log(currentTime)
   const result = await Job.countDocuments({
     createdAt: { $gt: currentTime },
     company: mongoose.Types.ObjectId(userId),
   });
 
-  const count = result.length > 0 ? result[0].count : 0;
-
-  return count;
+  return result;
 };
 
 function getDayDateRange(date, dayOfWeek) {

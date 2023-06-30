@@ -24,7 +24,7 @@ const JobSchema = new mongoose.Schema({
         required: true,
       },
       coverLetter: { type: String },
-      resume: { type: [String], required: true },
+      resume: { type: [String] },
       createdAt: { type: Date, default: Date.now },
       status: {
         type: String,
