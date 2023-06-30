@@ -59,6 +59,10 @@ const CompanySchema = new mongoose.Schema({
 
   businessDoc: [String],
 
+  online: Boolean,
+  typing: Boolean,
+  socketId: String,
+
   accountActivationToken: String,
   accountActivationCode: String,
   accountActivationTokenExpiry: Date,

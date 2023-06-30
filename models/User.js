@@ -66,6 +66,10 @@ const UserSchema = new mongoose.Schema({
 
   softSkills: [String],
 
+  online: Boolean,
+  typing: Boolean,
+  socketId: String,
+
   accountActivationToken: String,
   accountActivationCode: String,
   accountActivationTokenExpiry: Date,

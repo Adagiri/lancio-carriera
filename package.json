@@ -32,7 +32,7 @@
     "node-cache": "^5.1.2",
     "node-geocoder": "^3.28.0",
     "slugify": "^1.6.4",
-    "socket.io": "^4.4.1",
+    "socket.io": "^4.7.1",
     "south-african-id-validator": "^1.0.1",
     "swagger-ui-express": "^4.6.3",
     "tinyurl": "^1.1.7",
