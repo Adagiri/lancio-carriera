@@ -118,7 +118,7 @@ module.exports.protect = asyncHandler(async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const company = await Company.findById(decoded.id).select(
-      '_id company_name email registeredWith accountType first_name last_name'
+      '_id company_name email registeredWith accountType first_name last_name lastTimeNewApplicantsWasViewed'
     );
     const user = await User.findById(decoded.id).select(
       '_id company_name email registeredWith accountType first_name last_name'

@@ -119,7 +119,7 @@ const getProfileViewsDetail = async (userId, targetTime) => {
 };
 
 const getWeeklyGraphData = (views) => {
-  const today = new Date('2023-06-22');
+  const today = new Date();
   return {
     monday: getWeekDayProfileCount({
       ...getDayDateRange(today, 'monday'),
@@ -178,7 +178,7 @@ function getDailyGraphData(views) {
   const dateTimeObject = {};
 
   arr.forEach((item) => {
-    const currentDate = new Date('2023-06-22');
+    const currentDate = new Date();
     currentDate.setHours(item, 0, 0, 0);
     dateTimeObject[item] = getHourlyProfileCount(currentDate, views);
   });
@@ -308,7 +308,6 @@ module.exports.getLoggedInUserDashboardData = asyncHandler(
     const userId = req.user.id;
     const query = req.query;
     const duration = query.duration;
-    console.log(duration);
     const today = new Date();
     const targetTime =
       duration === 'thisWeek'

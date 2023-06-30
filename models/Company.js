@@ -67,6 +67,8 @@ const CompanySchema = new mongoose.Schema({
   resetPasswordCode: String,
   resetPasswordTokenExpiry: Date,
 
+  lastTimeNewApplicantsWasViewed: Date,
+
   createdAt: {
     type: Date,
     default: Date.now,

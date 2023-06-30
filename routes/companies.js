@@ -6,10 +6,13 @@ const {
   profileSetupStepOne,
   profileSetupStepTwo,
   profileSetupStepThree,
+  getLoggedInCompanyDashboardData,
 } = require('../controllers/companies');
 const { protectCompany } = require('../middlewares/auth');
 const router = express.Router();
 
+
+router.get('/dashboard-data', protectCompany, getLoggedInCompanyDashboardData);
 router.get('/logged-in-account', protectCompany, getLoggedInCompany);
 router.put('/profile-setup', protectCompany, profileSetup);
 router.put('/profile-setup/1', protectCompany, profileSetupStepOne);
