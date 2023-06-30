@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const errorHandler = require('./middlewares/error');
 const http = require('http');
 const jobs = require('./routes/jobs');
+const chats = require('./routes/chats');
 const auth = require('./routes/auth');
 const users = require('./routes/users');
 const companies = require('./routes/companies');
@@ -108,6 +109,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Mount routers
 app.use('/api/v1/jobs', jobs);
+app.use('/api/v1/chats', chats);
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/users', users);
 app.use('/api/v1/companies', companies);
