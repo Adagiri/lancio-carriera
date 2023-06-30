@@ -73,7 +73,7 @@ const getJobsAppliedCount = async (userId, targetTime) => {
     'applicants.profile': userId,
   });
 
-  return data.length;
+  return data
 };
 
 const getProfileViewsDetail = async (userId, targetTime) => {
@@ -325,6 +325,8 @@ module.exports.getLoggedInUserDashboardData = asyncHandler(
       targetTime,
       duration,
     });
+
+    console.log(jobsAppliedCount)
 
     return res.json({
       jobsAppliedCount: jobsAppliedCount,
