@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const asyncHandler = require('../middlewares/async');
 const ErrorResponse = require('../utils/errorResponse');
 const Chat = require('../models/Chat');
+const { generateRandomNumbers } = require('../utils/general');
 
 module.exports.getChats = asyncHandler(async (req, res, next) => {
   const query = req.query;
@@ -83,12 +84,17 @@ module.exports.getChatById = asyncHandler(async (req, res, next) => {
 module.exports.postChat = asyncHandler(async (req, res, next) => {
   const args = req.body;
   // validate arguments
-  args.company = req.user.id;
-  let chat = await chat.create(args);
+  const message = args.message;
+  message.owner = req.user.id;
+  message.id = generateRandomNumbers(10);
+  args.company = args.companyId;
+  args.user = args.userId;
+  req.user.accountType === 'company' && (args.userUnreadMessages = 1);
+  req.user.accountType === 'personal' && (args.companyUnreadMessages = 1);
+  args.lastMessage = message;
+  args.messages = [message];
 
-  chat = await chat
-    .findById(chat._id)
-    .populate('company')
-    .populate('applicants.profile');
+  let chat = await Chat.create(args);
+
   return res.status(201).json({ success: true, chat: chat });
 });

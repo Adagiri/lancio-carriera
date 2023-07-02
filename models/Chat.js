@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 
 const MessageSchema = new mongoose.Schema({
+  _id: false,
+  
+  id: {
+    type: String,
+    required: true,
+  },
+
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -43,6 +50,12 @@ const ChatSchema = new mongoose.Schema({
     required: true,
   },
 
+  company: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Company',
+    required: true,
+  },
+
   userUnreadMessages: {
     type: Number,
     default: 0,
@@ -54,12 +67,6 @@ const ChatSchema = new mongoose.Schema({
   },
 
   lastMessage: MessageSchema,
-
-  company: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Company',
-    required: true,
-  },
 
   messages: [MessageSchema],
 

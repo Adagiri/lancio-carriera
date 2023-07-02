@@ -2,6 +2,7 @@ const Chat = require('./models/Chat');
 const Company = require('./models/Company');
 const User = require('./models/User');
 const { io } = require('./server');
+const { generateRandomNumbers } = require('./utils/general');
 
 io.on('connection', (socket) => {
   console.log('A user connected');
@@ -74,13 +75,17 @@ io.on('connection', (socket) => {
   // Handle message sending
   socket.on('messageSent', async ({ chatId, userId, message }) => {
     // Save message to the database
+    const newMessage = message;
     const room = io.sockets.adapter.rooms.get(chatId);
     const numClients = room ? room.size : 0;
 
     const chat = await Chat.findById(chatId);
 
-    chat.lastMessage = message;
-    chat.messages.push(message);
+    newMessage.owner = userId;
+    newMessage.id = generateRandomNumbers(10);
+    chat.lastMessage = newMessage;
+    chat.messages.push(newMessage);
+    chat.updatedAt = new Date();
     if (numClients < 1) {
       userId.toString() === chat.company.toString() &&
         (chat.userUnreadMessages = chat.userUnreadMessages + 1);
