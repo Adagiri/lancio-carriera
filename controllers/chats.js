@@ -9,7 +9,7 @@ module.exports.getChats = asyncHandler(async (req, res, next) => {
   const user = req.user;
   const accountType = user.accountType;
 
-  const searchQuery = {};
+  const searchQuery = { lastMessage: { $ne: undefined } };
   if (accountType === 'company') {
     searchQuery.company = user.id;
   }
@@ -17,6 +17,8 @@ module.exports.getChats = asyncHandler(async (req, res, next) => {
   if (accountType === 'user') {
     searchQuery.user = user.id;
   }
+
+  console.log(searchQuery);
 
   let data = await Chat.find(searchQuery)
     .sort({ _id: -1 })
@@ -80,6 +82,35 @@ module.exports.getChatById = asyncHandler(async (req, res, next) => {
     chat: chat,
   });
 });
+
+module.exports.getChatsByCompanyAndUserId = asyncHandler(
+  async (req, res, next) => {
+    const company = req.query.companyId;
+    const user = req.query.userId;
+
+    let chat = await Chat.findOne({ company: company, user: user });
+
+    if (!chat) {
+      const newChat = {
+        user: user,
+        company: company,
+      };
+      chat = await Chat.create(newChat);
+    }
+
+    chat = await Chat.findById(chat._id)
+      .populate({ path: 'company', select: 'company_name photo accountType' })
+      .populate({
+        path: 'user',
+        select: 'first_name last_name photo accountType',
+      });
+
+    return res.json({
+      success: true,
+      chat: chat,
+    });
+  }
+);
 
 module.exports.postChat = asyncHandler(async (req, res, next) => {
   const args = req.body;
