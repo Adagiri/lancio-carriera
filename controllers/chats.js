@@ -3,6 +3,8 @@ const asyncHandler = require('../middlewares/async');
 const ErrorResponse = require('../utils/errorResponse');
 const Chat = require('../models/Chat');
 const { generateRandomNumbers } = require('../utils/general');
+const Company = require('../models/Company');
+const User = require('../models/User');
 
 module.exports.getChats = asyncHandler(async (req, res, next) => {
   const query = req.query;
@@ -23,10 +25,13 @@ module.exports.getChats = asyncHandler(async (req, res, next) => {
   let data = await Chat.find(searchQuery)
     .sort({ _id: -1 })
     .select('-messages')
-    .populate({ path: 'company', select: 'company_name photo accountType' })
+    .populate({
+      path: 'company',
+      select: 'company_name photo accountType online',
+    })
     .populate({
       path: 'user',
-      select: 'first_name last_name photo accountType',
+      select: 'first_name last_name photo accountType online',
     });
 
   data = data.map((chat) => {
@@ -52,10 +57,13 @@ module.exports.getChatById = asyncHandler(async (req, res, next) => {
   const chatId = req.params.id;
 
   let chat = await Chat.findById(chatId)
-    .populate({ path: 'company', select: 'company_name photo accountType' })
+    .populate({
+      path: 'company',
+      select: 'company_name photo accountType online',
+    })
     .populate({
       path: 'user',
-      select: 'first_name last_name photo accountType',
+      select: 'first_name last_name photo accountType online',
     });
 
   if (!chat) {
@@ -99,10 +107,13 @@ module.exports.getChatsByCompanyAndUserId = asyncHandler(
     }
 
     chat = await Chat.findById(chat._id)
-      .populate({ path: 'company', select: 'company_name photo accountType' })
+      .populate({
+        path: 'company',
+        select: 'company_name photo accountType online',
+      })
       .populate({
         path: 'user',
-        select: 'first_name last_name photo accountType',
+        select: 'first_name last_name photo accountType online',
       });
 
     return res.json({
