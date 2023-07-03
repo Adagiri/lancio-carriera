@@ -104,27 +104,29 @@ io.on('connection', (socket) => {
   });
 
   socket.on('joinChat', ({ chatId }) => {
-    console.log('A user joined chat')
+    console.log('A user joined chat');
     socket.join(chatId);
   });
 
   // Handle typing status
   socket.on('startedTyping', ({ chatId, userId }) => {
-    socket.to(chatId).emit('userStartedTyping', userId);
+    io.to(chatId).emit('userStartedTyping', userId);
+    // socket.to(chatId).emit('userStartedTyping', userId);
   });
 
   // Handle stop typing status
   socket.on('stoppedTyping', ({ chatId, userId }) => {
-    socket.to(chatId).emit('userStoppedTyping', userId);
+    io.to(chatId).emit('userStoppedTyping', userId);
+    // socket.to(chatId).emit('userStoppedTyping', userId);
   });
 
   // Handle message sending
   socket.on('messageSent', async ({ chatId, userId, message }) => {
     // Save message to the database
-    console.log(chatId, userId, message, 'chatId , userId, message')
+    console.log(chatId, userId, message, 'chatId , userId, message');
     const newMessage = message;
     const room = io.sockets.adapter.rooms.get(chatId);
-    console.log(room, 'room')
+    console.log(room, 'room');
     const numClients = room ? room.size : 0;
     console.log(numClients);
 
