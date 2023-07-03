@@ -29,11 +29,11 @@ const MessageSchema = new mongoose.Schema({
     },
     src: {
       type: String,
-      required: true,
+      // required: true,
     },
     contentType: {
       type: String,
-      required: true,
+      // required: true,
     },
   },
 
