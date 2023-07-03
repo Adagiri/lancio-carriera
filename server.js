@@ -45,62 +45,6 @@ if (process.env.NODE_ENV === 'development') {
 const httpServer = http.Server(app);
 const io = socketIO(httpServer);
 
-io.on('connection', (socket) => {
-  console.log('A user connected');
-
-  // Set user as online when connected
-  socket.on('setOnline', (id) => {
-    User.findOneAndUpdate({ username }, { online: true }, { new: true })
-      .then((user) => {
-        console.log(`${user.username} is online`);
-        io.emit('userStatus', user);
-      })
-      .catch((error) => {
-        console.error('Error setting user online:', error);
-      });
-  });
-
-  // Set user as offline when disconnected
-  socket.on('disconnect', () => {
-    User.findOneAndUpdate(
-      { socketId: socket.id },
-      { online: false },
-      { new: true }
-    )
-      .then((user) => {
-        console.log(`${user.username} is offline`);
-        io.emit('userStatus', user);
-      })
-      .catch((error) => {
-        console.error('Error setting user offline:', error);
-      });
-  });
-
-  // Handle typing status
-  socket.on('typing', (username) => {
-    User.findOneAndUpdate({ username }, { typing: true }, { new: true })
-      .then((user) => {
-        console.log(`${user.username} is typing`);
-        io.emit('userTyping', user);
-      })
-      .catch((error) => {
-        console.error('Error setting user typing status:', error);
-      });
-  });
-
-  // Handle stop typing status
-  socket.on('stopTyping', (username) => {
-    User.findOneAndUpdate({ username }, { typing: false }, { new: true })
-      .then((user) => {
-        console.log(`${user.username} stopped typing`);
-        io.emit('userTyping', user);
-      })
-      .catch((error) => {
-        console.error('Error setting user typing status:', error);
-      });
-  });
-});
-
 app.get('/', (req, res) => {
   return res.send('Hello there!');
 });
