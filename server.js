@@ -110,7 +110,10 @@ io.on('connection', (socket) => {
 
   // Handle typing status
   socket.on('startedTyping', ({ chatId, userId }) => {
+    console.log(chatId, userId);
     io.to(chatId).emit('userStartedTyping', userId);
+    console.log('done');
+
     // socket.to(chatId).emit('userStartedTyping', userId);
   });
 
