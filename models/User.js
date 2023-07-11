@@ -57,7 +57,6 @@ const UserSchema = new mongoose.Schema({
   country: String,
   state: String,
   city: String,
-  address: String,
 
   photo: String,
   bio: String,
