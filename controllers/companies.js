@@ -34,7 +34,7 @@ const getTotalApplicationsCount = async (userId, currentTime) => {
 };
 
 const getJobPostsCount = async (userId, currentTime) => {
-  console.log(currentTime)
+  console.log(currentTime);
   const result = await Job.countDocuments({
     createdAt: { $gt: currentTime },
     company: mongoose.Types.ObjectId(userId),
@@ -248,49 +248,22 @@ module.exports.profileSetup = asyncHandler(async (req, res, next) => {
   });
 });
 
-module.exports.profileSetupStepOne = asyncHandler(async (req, res, next) => {
-  const args = req.body;
-  // validate arguments
+module.exports.editNotificationSettingsForCompany = asyncHandler(
+  async (req, res, next) => {
+    const args = req.body;
 
-  args.isStepOneProfileSetupComplete = true;
-  const company = await Company.findByIdAndUpdate(req.user.id, args, {
-    new: true,
-  });
+    const updates = {};
+    for (const key in args) {
+      updates[`notificationSettings.${key}`] = args[key];
+    }
 
-  return res.status(200).json({
-    success: true,
-    company: company,
-  });
-});
+    const company = await Company.findByIdAndUpdate(req.user.id, updates, {
+      new: true,
+    });
 
-module.exports.profileSetupStepTwo = asyncHandler(async (req, res, next) => {
-  const args = req.body;
-  // validate arguments
-
-  args.isStepTwoProfileSetupComplete = true;
-  const company = await Company.findByIdAndUpdate(req.user.id, args, {
-    new: true,
-  });
-
-  return res.status(200).json({
-    success: true,
-    company: company,
-  });
-});
-
-module.exports.profileSetupStepThree = asyncHandler(async (req, res, next) => {
-  const args = req.body;
-  // validate arguments
-
-  args.isStepThreeProfileSetupComplete = true;
-  args.isProfileSetupComplete = true;
-
-  const company = await Company.findByIdAndUpdate(req.user.id, args, {
-    new: true,
-  });
-
-  return res.status(200).json({
-    success: true,
-    company: company,
-  });
-});
+    return res.status(200).json({
+      success: true,
+      company: company,
+    });
+  }
+);

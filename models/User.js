@@ -77,6 +77,18 @@ const UserSchema = new mongoose.Schema({
   resetPasswordCode: String,
   resetPasswordTokenExpiry: Date,
 
+  notificationSettings: {
+    messages: {
+      type: Boolean,
+      default: true,
+    },
+
+    acceptedApplications: {
+      type: Boolean,
+      default: true,
+    },
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,

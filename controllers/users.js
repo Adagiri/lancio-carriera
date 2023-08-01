@@ -73,7 +73,7 @@ const getJobsAppliedCount = async (userId, targetTime) => {
     'applicants.profile': userId,
   });
 
-  return data
+  return data;
 };
 
 const getProfileViewsDetail = async (userId, targetTime) => {
@@ -326,7 +326,7 @@ module.exports.getLoggedInUserDashboardData = asyncHandler(
       duration,
     });
 
-    console.log(jobsAppliedCount)
+    console.log(jobsAppliedCount);
 
     return res.json({
       jobsAppliedCount: jobsAppliedCount,
@@ -351,55 +351,22 @@ module.exports.profileSetup = asyncHandler(async (req, res, next) => {
   });
 });
 
-module.exports.profileSetupStepOne = asyncHandler(async (req, res, next) => {
-  const args = req.body;
-  // validate arguments
+module.exports.editNotificationSettingsForUser = asyncHandler(
+  async (req, res, next) => {
+    const args = req.body;
 
-  args.isStepOneProfileSetupComplete = true;
-  const user = await User.findByIdAndUpdate(req.user.id, args, { new: true });
+    const updates = {};
+    for (const key in args) {
+      updates[`notificationSettings.${key}`] = args[key];
+    }
 
-  return res.status(200).json({
-    success: true,
-    user: user,
-  });
-});
+    const user = await User.findByIdAndUpdate(req.user.id, updates, {
+      new: true,
+    });
 
-module.exports.profileSetupStepTwo = asyncHandler(async (req, res, next) => {
-  const args = req.body;
-  // validate arguments
-
-  args.isStepTwoProfileSetupComplete = true;
-  const user = await User.findByIdAndUpdate(req.user.id, args, { new: true });
-
-  return res.status(200).json({
-    success: true,
-    user: user,
-  });
-});
-
-module.exports.profileSetupStepThree = asyncHandler(async (req, res, next) => {
-  const args = req.body;
-  // validate arguments
-
-  args.isStepThreeProfileSetupComplete = true;
-  const user = await User.findByIdAndUpdate(req.user.id, args, { new: true });
-
-  return res.status(200).json({
-    success: true,
-    user: user,
-  });
-});
-
-module.exports.profileSetupStepFour = asyncHandler(async (req, res, next) => {
-  const args = req.body;
-  // validate arguments
-
-  args.isStepFourProfileSetupComplete = true;
-  args.isProfileSetupComplete = true;
-  const user = await User.findByIdAndUpdate(req.user.id, args, { new: true });
-
-  return res.status(200).json({
-    success: true,
-    user: user,
-  });
-});
+    return res.status(200).json({
+      success: true,
+      user: user,
+    });
+  }
+);

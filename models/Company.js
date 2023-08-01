@@ -72,6 +72,23 @@ const CompanySchema = new mongoose.Schema({
 
   lastTimeNewApplicantsWasViewed: Date,
 
+  notificationSettings: {
+    messages: {
+      type: Boolean,
+      default: true,
+    },
+
+    newApplicants: {
+      type: Boolean,
+      default: true,
+    },
+
+    reportedJobs: {
+      type: Boolean,
+      default: true,
+    },
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,
