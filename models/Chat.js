@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const MessageSchema = new mongoose.Schema({
   _id: false,
-  
+
   id: {
     type: String,
     required: true,
@@ -23,6 +23,8 @@ const MessageSchema = new mongoose.Schema({
   },
 
   file: {
+    name: String,
+
     type: {
       type: String,
       enum: ['image', 'video', 'others'],

@@ -9,6 +9,7 @@ const JobSchema = new mongoose.Schema({
   requirements: { type: [String], required: true },
   responsibilities: { type: [String], required: true },
   isClosed: { type: Boolean, default: false },
+  reportedBy: { type: [mongoose.ObjectId], ref: 'User' },
   applicantsCount: {
     type: Number,
     default: 0,

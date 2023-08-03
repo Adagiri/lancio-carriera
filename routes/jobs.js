@@ -11,6 +11,7 @@ const {
   getUserJobs,
   getNewApplicantsList,
   getNewApplicantsCount,
+  reportJob,
 } = require('../controllers/jobs');
 const { protectCompany, protectUser, protect } = require('../middlewares/auth');
 const router = express.Router();
@@ -30,7 +31,8 @@ router.get('/:id', protect, getJobById);
 
 router.post('/', protectCompany, postJob);
 router.put('/', protectCompany, editJob);
-router.put('/apply', protect, applyToJob);
+router.put('/apply', protectUser, applyToJob);
+router.put('/report', protectUser, reportJob);
 router.put('/accept-applicant', protectCompany, acceptApplicant);
 
 module.exports = router;

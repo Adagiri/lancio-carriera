@@ -77,13 +77,23 @@ const UserSchema = new mongoose.Schema({
   resetPasswordCode: String,
   resetPasswordTokenExpiry: Date,
 
+  unviewedNotifications: {
+    type: Number,
+    default: 0,
+  },
+
   notificationSettings: {
-    messages: {
+    onMessageReceived: {
       type: Boolean,
       default: true,
     },
 
-    acceptedApplications: {
+    onApplicationAccepted: {
+      type: Boolean,
+      default: true,
+    },
+
+    onJobClosed: {
       type: Boolean,
       default: true,
     },

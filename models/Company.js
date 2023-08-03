@@ -72,18 +72,33 @@ const CompanySchema = new mongoose.Schema({
 
   lastTimeNewApplicantsWasViewed: Date,
 
+  unviewedNotifications: {
+    type: Number,
+    default: 0,
+  },
+
   notificationSettings: {
-    messages: {
+    onMessageReceived: {
       type: Boolean,
       default: true,
     },
 
-    newApplicants: {
+    onApplicantApplied: {
       type: Boolean,
       default: true,
     },
 
-    reportedJobs: {
+    onJobReported: {
+      type: Boolean,
+      default: true,
+    },
+
+    onJobPosted: {
+      type: Boolean,
+      default: true,
+    },
+
+    onJobClosed: {
       type: Boolean,
       default: true,
     },

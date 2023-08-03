@@ -24,6 +24,8 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
 const { connectDB } = require('./config/db');
+const UserNotification = require('./models/UserNotification');
+const CompanyNotification = require('./models/CompanyNotification');
 
 dotenv.config({ path: './config/config.env' });
 
@@ -133,22 +135,37 @@ io.on('connection', (socket) => {
     const numClients = room ? room.size : 0;
     console.log(numClients);
 
-    const chat = await Chat.findById(chatId);
+    const chat = await Chat.findById(chatId)
+      .populate({
+        path: 'company',
+        select: 'company_name photo notificationSettings',
+      })
+      .populate({
+        path: 'user',
+        select: 'first_name photo notificationSettings',
+      });
 
     newMessage.owner = userId;
     newMessage.id = generateRandomNumbers(10);
     chat.lastMessage = newMessage;
     chat.messages.push(newMessage);
     chat.updatedAt = new Date();
-    if (numClients === 1) {
-      userId.toString() === chat.company.toString() &&
-        (chat.userUnreadMessages = chat.userUnreadMessages + 1);
 
-      userId.toString() === chat.user.toString() &&
-        (chat.companyUnreadMessages = chat.companyUnreadMessages + 1);
+    const companyId = chat.company._id;
+    const jobSeekerId = chat.user._id;
+    const isCompany = userId.toString() === companyId.toString();
+    const isUser = userId.toString() === jobSeekerId.toString();
+
+    if (numClients === 1) {
+      isCompany && (chat.userUnreadMessages = chat.userUnreadMessages + 1);
+
+      isUser && (chat.companyUnreadMessages = chat.companyUnreadMessages + 1);
     }
+
     console.log(chat, 'chat detail from socket-io');
     await chat.save();
+
+    await sendNotificationOnMessageReceived({ chat, newMessage, isCompany, isUser });
 
     // Emit the message to all connected clients in the chat room
     io.to(chatId).emit('newMessage', message);
@@ -184,5 +201,109 @@ process.on('unhandledRejection', (err, promise) => {
 
   server.close(() => process.exit(1));
 });
+
+const sendNotificationOnMessageReceived = async ({
+  chat,
+  newMessage,
+  isCompany,
+  isUser,
+}) => {
+  const { company, user } = chat;
+
+  const fileName = newMessage.file?.name ? newMessage.file.name : '';
+  const body =
+    newMessage.type === 'text'
+      ? `Message: ${newMessage.text}`
+      : `Sent a file ${fileName}`;
+
+  if (isCompany) {
+    // Save notification for User(Job seeker)
+    if (user.notificationSettings.messages) {
+      // Check if there is an unviewed existing notification for the current chat
+      const existingNotification = await UserNotification.findOne({
+        owner: user._id,
+        case: 'Message Received',
+        subjectType: 'Chat',
+        subject: chat._id,
+        hasBeenViewed: false,
+      });
+
+      if (existingNotification) {
+        return;
+      } else {
+        // Save notification
+        const arguments = {
+          owner: user._id,
+          case: 'Message Received',
+          title: company.company_name,
+          body: body,
+          company: company._id,
+          subject: chat._id,
+          subjectType: 'Chat',
+        };
+
+        const session = await mongoose.startSession();
+        await session.withTransaction(async () => {
+          await User.findByIdAndUpdate(
+            user._id,
+            {
+              $inc: { unviewedNotifications: 1 },
+            },
+            { session }
+          );
+
+          await UserNotification.create([arguments], {
+            session,
+          });
+        });
+        session.endSession();
+      }
+    }
+  }
+
+  if (isUser) {
+    // Save notification for Company(Job poster)
+    if (company.notificationSettings.messages) {
+      // Check if there is an unviewed existing notification for the current chat
+      const existingNotification = await CompanyNotification.findOne({
+        owner: company._id,
+        case: 'Message Received',
+        subjectType: 'Chat',
+        subject: chat._id,
+        hasBeenViewed: false,
+      });
+
+      if (existingNotification) {
+        return;
+      } else {
+        const arguments = {
+          owner: company._id,
+          case: 'Message Received',
+          title: user.first_name,
+          body: body,
+          user: user._id,
+          subject: chat._id,
+          subjectType: 'Chat',
+        };
+
+        const session = await mongoose.startSession();
+        await session.withTransaction(async () => {
+          await Company.findByIdAndUpdate(
+            company._id,
+            {
+              $inc: { unviewedNotifications: 1 },
+            },
+            { session }
+          );
+
+          await CompanyNotification.create([arguments], {
+            session,
+          });
+        });
+        session.endSession();
+      }
+    }
+  }
+};
 
 module.exports.io = io;
