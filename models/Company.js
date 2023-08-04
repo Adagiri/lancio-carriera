@@ -72,7 +72,7 @@ const CompanySchema = new mongoose.Schema({
 
   lastTimeNewApplicantsWasViewed: Date,
 
-  unviewedNotifications: {
+  unreadNotifications: {
     type: Number,
     default: 0,
   },

@@ -16,23 +16,10 @@ Report a Job seeker - Send notification to the Job Seeker
 Report a Job poster - Send notification to the Job poster
 
 # TODO
-
+handle deletion of unused resume & photos when updating user profile, and unused business doc & photo whilst updating company
 validations for all apis
 can't use old passwords
 if mailersend, delete workmail
-
-# Handle notification switches in the profile _done_
-
-# Setup notification for both user and company _done_
-
-# Integrate the scenerios which requires notification. Test them _done_
-
-# Create APIS for fetching notifications
-
-# Create APIS for marking notification as read
-
-# Move to the remaining apis above
-
 
 # Frontend Notes
 

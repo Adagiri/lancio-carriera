@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
 const colors = require('colors');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -165,7 +166,12 @@ io.on('connection', (socket) => {
     console.log(chat, 'chat detail from socket-io');
     await chat.save();
 
-    await sendNotificationOnMessageReceived({ chat, newMessage, isCompany, isUser });
+    await sendNotificationOnMessageReceived({
+      chat,
+      newMessage,
+      isCompany,
+      isUser,
+    });
 
     // Emit the message to all connected clients in the chat room
     io.to(chatId).emit('newMessage', message);
@@ -225,7 +231,7 @@ const sendNotificationOnMessageReceived = async ({
         case: 'Message Received',
         subjectType: 'Chat',
         subject: chat._id,
-        hasBeenViewed: false,
+        hasBeenRead: false,
       });
 
       if (existingNotification) {
@@ -247,7 +253,7 @@ const sendNotificationOnMessageReceived = async ({
           await User.findByIdAndUpdate(
             user._id,
             {
-              $inc: { unviewedNotifications: 1 },
+              $inc: { unreadNotifications: 1 },
             },
             { session }
           );
@@ -270,7 +276,7 @@ const sendNotificationOnMessageReceived = async ({
         case: 'Message Received',
         subjectType: 'Chat',
         subject: chat._id,
-        hasBeenViewed: false,
+        hasBeenRead: false,
       });
 
       if (existingNotification) {
@@ -291,7 +297,7 @@ const sendNotificationOnMessageReceived = async ({
           await Company.findByIdAndUpdate(
             company._id,
             {
-              $inc: { unviewedNotifications: 1 },
+              $inc: { unreadNotifications: 1 },
             },
             { session }
           );

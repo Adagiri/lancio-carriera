@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 const asyncHandler = require('../middlewares/async');
 const Company = require('../models/Company');
 const Job = require('../models/Job');
+const CompanyNotification = require('../models/CompanyNotification');
 
 const getTotalApplicationsCount = async (userId, currentTime) => {
   const result = await Job.aggregate([
@@ -248,6 +249,24 @@ module.exports.profileSetup = asyncHandler(async (req, res, next) => {
   });
 });
 
+module.exports.updateProfile = asyncHandler(async (req, res, next) => {
+  const args = req.body;
+
+  const companyBeforeEditing = await Company.findById(req.user.id).select(
+    'photo businessDoc'
+  );
+  const company = await Company.findByIdAndUpdate(req.user.id, args, {
+    new: true,
+  });
+
+  // await cleanupStorage(args, companyBeforeEditing);
+
+  return res.status(200).json({
+    success: true,
+    company: company,
+  });
+});
+
 module.exports.editNotificationSettingsForCompany = asyncHandler(
   async (req, res, next) => {
     const args = req.body;
@@ -267,3 +286,74 @@ module.exports.editNotificationSettingsForCompany = asyncHandler(
     });
   }
 );
+
+module.exports.getNotificationsForCompany = asyncHandler(
+  async (req, res, next) => {
+    let cursor = '000000000000000000000000';
+    if (req.query.cursor !== 'null') {
+      cursor = req.query.cursor;
+    }
+
+    const limit = Math.abs(Number(req.query.limit)) || 10;
+
+    const query = { owner: req.user.id };
+
+    const cursorDocument = await CompanyNotification.findById(cursor).select(
+      'createdAt'
+    );
+
+    if (cursorDocument) {
+      query.createdAt = { $lte: cursorDocument.createdAt };
+    }
+
+    const notifications = await CompanyNotification.find(query)
+      .populate({
+        path: 'user',
+        select: 'first_name photo',
+      })
+      .sort({ createdAt: -1 })
+      .limit(limit + 1);
+
+    const hasNextPage = notifications.length > limit;
+    let nextPageCursor = null;
+
+    if (hasNextPage) {
+      nextPageCursor = notifications.pop()._id;
+    }
+
+    return res.json({
+      hasNextPage,
+      nextPageCursor,
+      notifications: notifications,
+      count: notifications.length,
+    });
+  }
+);
+
+module.exports.markNotificationAsRead = asyncHandler(async (req, res, next) => {
+  const session = await mongoose.startSession();
+  await session.withTransaction(async () => {
+    // Reduce user's notification count
+    await Company.findByIdAndUpdate(
+      req.user._id,
+      {
+        $inc: { unreadNotifications: -1 },
+      },
+      { session }
+    );
+
+    // Mark notification as read
+    await CompanyNotification.findByIdAndUpdate(
+      req.body.notificationId,
+      {
+        hasBeenRead: true,
+      },
+      { session }
+    );
+  });
+  session.endSession();
+
+  return res.json({
+    success: true,
+  });
+});

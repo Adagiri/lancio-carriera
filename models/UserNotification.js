@@ -6,7 +6,7 @@ const UserNotificationSchema = new mongoose.Schema({
     required: true,
   },
 
-  hasBeenViewed: {
+  hasBeenRead: {
     type: Boolean,
     default: false,
   },

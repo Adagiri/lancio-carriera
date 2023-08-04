@@ -33,7 +33,7 @@ const sendNotificationOnApplicantApplied = async ({ user, job }) => {
       await Company.findByIdAndUpdate(
         company._id,
         {
-          $inc: { unviewedNotifications: 1 },
+          $inc: { unreadNotifications: 1 },
         },
         { session }
       );
@@ -65,7 +65,7 @@ const sendNotificationOnJobReported = async ({ user, job }) => {
       await Company.findByIdAndUpdate(
         company._id,
         {
-          $inc: { unviewedNotifications: 1 },
+          $inc: { unreadNotifications: 1 },
         },
         { session }
       );
@@ -96,7 +96,7 @@ const sendNotificationOnJobPosted = async (job) => {
       await Company.findByIdAndUpdate(
         company._id,
         {
-          $inc: { unviewedNotifications: 1 },
+          $inc: { unreadNotifications: 1 },
         },
         { session }
       );
@@ -128,7 +128,7 @@ const sendNotificationOnJobClosed = async (job) => {
       await Company.findByIdAndUpdate(
         company._id,
         {
-          $inc: { unviewedNotifications: 1 },
+          $inc: { unreadNotifications: 1 },
         },
         { session }
       );
@@ -162,7 +162,7 @@ const sendNotificationOnJobClosed = async (job) => {
     await User.updateMany(
       { _id: selectedApplicants.map((applicant) => applicant.profile._id) },
       {
-        $inc: { unviewedNotifications: 1 },
+        $inc: { unreadNotifications: 1 },
       },
       { session }
     );
@@ -185,17 +185,16 @@ const sendNotificationOnApplicantAccepted = async ({ job, applicant }) => {
     company: job.company._id,
   };
 
-    console.log(applicant, 'applicant');
-
+  console.log(applicant, 'applicant');
 
   if (applicant.profile?.notificationSettings?.onApplicationAccepted) {
-    console.log(applicant, 'applicant')
+    console.log(applicant, 'applicant');
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
       await User.findByIdAndUpdate(
         applicant.profile._id,
         {
-          $inc: { unviewedNotifications: 1 },
+          $inc: { unreadNotifications: 1 },
         },
         { session }
       );
@@ -206,7 +205,6 @@ const sendNotificationOnApplicantAccepted = async ({ job, applicant }) => {
     });
     session.endSession();
   }
-
 };
 
 module.exports.getJobs = asyncHandler(async (req, res, next) => {
@@ -568,7 +566,8 @@ module.exports.acceptApplicant = asyncHandler(async (req, res, next) => {
   // validate arguments
   const job = await Job.findById(jobId).populate('company').populate({
     path: 'applicants.profile',
-    select: 'first_name last_name age photo country state city notificationSettings',
+    select:
+      'first_name last_name age photo country state city notificationSettings',
   });
 
   // Job Exists or Not

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const asyncHandler = require('../middlewares/async');
 const ErrorResponse = require('../utils/errorResponse.js');
 const User = require('../models/User');
@@ -12,6 +13,34 @@ const {
 } = require('date-fns');
 const Company = require('../models/Company');
 const Job = require('../models/Job');
+const UserNotification = require('../models/UserNotification');
+const { deleteS3File } = require('../services/AwsService');
+
+const cleanupStorage = async (args, userBeforeEditing) => {
+  const resumeBeforeEditing = userBeforeEditing.resume;
+  // if (args.resume !== resumeBeforeEditing) {
+  //   const bucket = process.env.AWS_FILEUPLOAD_BUCKET;
+  //   const filePrefix = process.env.SAVED_FILES_PREFIX;
+
+  //   if (resumeBeforeEditing.startsWith(filePrefix)) {
+  //     const key = resumeBeforeEditing.substring(filePrefix.length);
+  //     await deleteS3File(key, bucket);
+  //   }
+  // }
+
+  const photoBeforeEditing = userBeforeEditing.photo;
+  console.log(args.photo, photoBeforeEditing);
+  if (args.photo !== photoBeforeEditing) {
+    const bucket = process.env.AWS_FILEUPLOAD_BUCKET;
+    const filePrefix = process.env.SAVED_FILES_PREFIX;
+    console.log(bucket, filePrefix);
+
+    if (photoBeforeEditing.startsWith(filePrefix)) {
+      const key = photoBeforeEditing.substring(filePrefix.length);
+      await deleteS3File(key, bucket);
+    }
+  }
+};
 
 function getDayDateRange(date, dayOfWeek) {
   const targetDay = [
@@ -351,6 +380,23 @@ module.exports.profileSetup = asyncHandler(async (req, res, next) => {
   });
 });
 
+module.exports.updateProfile = asyncHandler(async (req, res, next) => {
+  const args = req.body;
+
+  const userBeforeEditing = await User.findById(req.user.id).select(
+    'photo resume'
+  );
+  const user = await User.findByIdAndUpdate(req.user.id, args, {
+    new: true,
+  });
+
+  // await cleanupStorage(args, userBeforeEditing);
+
+  return res.status(200).json({
+    success: true,
+    user: user,
+  });
+});
 module.exports.editNotificationSettingsForUser = asyncHandler(
   async (req, res, next) => {
     const args = req.body;
@@ -370,3 +416,75 @@ module.exports.editNotificationSettingsForUser = asyncHandler(
     });
   }
 );
+
+module.exports.getNotificationsForUser = asyncHandler(
+  async (req, res, next) => {
+    let cursor = '000000000000000000000000';
+    if (req.query.cursor !== 'null') {
+      cursor = req.query.cursor;
+    }
+
+    const limit = Math.abs(Number(req.query.limit)) || 10;
+
+    const query = { owner: req.user.id };
+
+    const cursorDocument = await UserNotification.findById(cursor).select(
+      'createdAt'
+    );
+
+    if (cursorDocument) {
+      query.createdAt = { $lte: cursorDocument.createdAt };
+    }
+
+    console.log(cursorDocument);
+    const notifications = await UserNotification.find(query)
+      .populate({
+        path: 'company',
+        select: 'company_name photo',
+      })
+      .sort({ createdAt: -1 })
+      .limit(limit + 1);
+
+    const hasNextPage = notifications.length > limit;
+    let nextPageCursor = null;
+
+    if (hasNextPage) {
+      nextPageCursor = notifications.pop()._id;
+    }
+
+    return res.json({
+      hasNextPage,
+      nextPageCursor,
+      notifications: notifications,
+      count: notifications.length,
+    });
+  }
+);
+
+module.exports.markNotificationAsRead = asyncHandler(async (req, res, next) => {
+  const session = await mongoose.startSession();
+  await session.withTransaction(async () => {
+    // Reduce user's notification count
+    await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $inc: { unreadNotifications: -1 },
+      },
+      { session }
+    );
+
+    // Mark notification as read
+    await UserNotification.findByIdAndUpdate(
+      req.body.notificationId,
+      {
+        hasBeenRead: true,
+      },
+      { session }
+    );
+  });
+  session.endSession();
+
+  return res.json({
+    success: true,
+  });
+});

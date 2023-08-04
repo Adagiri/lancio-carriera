@@ -31,8 +31,29 @@ const uploadFile = (params) => {
   return s3.upload(params);
 };
 
+const deleteS3File = async (key, bucket) => {
+  var s3 = new AWS.S3({
+    region: 'us-east-1',
+
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_KEY,
+    },
+  });
+
+  console.log(s3)
+  console.log(key, 'key');
+  var params = {
+    Bucket: bucket,
+    Key: key,
+  };
+  console.log(params, 'params');
+  const file = await s3.deleteObject(params).promise();
+};
+
 module.exports = {
   sns,
   ses,
   uploadFile,
+  deleteS3File,
 };
