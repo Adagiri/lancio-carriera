@@ -16,6 +16,7 @@ const CompanyNotificationSchema = new mongoose.Schema({
     enum: [
       'Message Received',
       'Applicant Applied',
+      'Company Reported',
       'Job Reported',
       'Job Posted',
       'Job Closed',

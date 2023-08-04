@@ -13,7 +13,12 @@ const UserNotificationSchema = new mongoose.Schema({
 
   case: {
     type: String,
-    enum: ['Message Received', 'Application Accepted', 'Job Closed'],
+    enum: [
+      'Message Received',
+      'Application Accepted',
+      'Job Closed',
+      'User Reported',
+    ],
     required: true,
   },
 

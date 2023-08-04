@@ -97,6 +97,11 @@ const UserSchema = new mongoose.Schema({
       type: Boolean,
       default: true,
     },
+
+    onUserReported: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   createdAt: {

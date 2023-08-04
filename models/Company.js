@@ -88,6 +88,11 @@ const CompanySchema = new mongoose.Schema({
       default: true,
     },
 
+    onCompanyReported: {
+      type: Boolean,
+      default: true,
+    },
+
     onJobReported: {
       type: Boolean,
       default: true,

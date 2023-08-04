@@ -194,8 +194,47 @@ const getApplicantsCountGraphData = async ({
   return data;
 };
 
+const sendNotificationOnCompanyReported = async ({ user, company }) => {
+  const arguments = {
+    owner: company._id,
+    case: 'Company Reported',
+    title: user.first_name,
+    body: `Reported you`,
+    user: user._id,
+    subject: user._id,
+    subjectType: 'User',
+  };
+
+  if (company.notificationSettings.onCompanyReported) {
+    const session = await mongoose.startSession();
+    await session.withTransaction(async () => {
+      await Company.findByIdAndUpdate(
+        company._id,
+        {
+          $inc: { unreadNotifications: 1 },
+        },
+        { session }
+      );
+
+      await CompanyNotification.create([arguments], {
+        session,
+      });
+    });
+    session.endSession();
+  }
+};
+
 module.exports.getLoggedInCompany = asyncHandler(async (req, res, next) => {
-  const company = await Company.findById(req.user.id);
+  let company = await Company.findById(req.user.id);
+  const userId = req.user.id;
+  const targetTime = new Date('2022-30-30');
+  const totalApplicationsCount = await getTotalApplicationsCount(
+    userId,
+    targetTime
+  );
+
+  company = company.toObject();
+  company.totalApplicationsCount = totalApplicationsCount;
   return res.status(200).json(company);
 });
 
@@ -352,6 +391,24 @@ module.exports.markNotificationAsRead = asyncHandler(async (req, res, next) => {
     );
   });
   session.endSession();
+
+  return res.json({
+    success: true,
+  });
+});
+
+module.exports.reportACompany = asyncHandler(async (req, res, next) => {
+  const company = await Company.findById(req.body.companyId).select(
+    'company_name notificationSettings'
+  );
+
+  if (company) {
+    // Send notification
+    await sendNotificationOnCompanyReported({
+      user: req.user,
+      company: company,
+    });
+  }
 
   return res.json({
     success: true,

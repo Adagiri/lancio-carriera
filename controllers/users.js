@@ -244,6 +244,36 @@ const getProfileViewsGraphData = async ({ userId, targetTime, duration }) => {
   return data;
 };
 
+const sendNotificationOnUserReported = async ({ user, company }) => {
+  const arguments = {
+    owner: user._id,
+    case: 'User Reported',
+    title: company.company_name,
+    body: `Reported you`,
+    company: company._id,
+    subject: company._id,
+    subjectType: 'Company',
+  };
+
+  if (user.notificationSettings.onUserReported) {
+    const session = await mongoose.startSession();
+    await session.withTransaction(async () => {
+      await User.findByIdAndUpdate(
+        user._id,
+        {
+          $inc: { unreadNotifications: 1 },
+        },
+        { session }
+      );
+
+      await UserNotification.create([arguments], {
+        session,
+      });
+    });
+    session.endSession();
+  }
+};
+
 module.exports.getUserById = asyncHandler(async (req, res, next) => {
   const userId = req.params.id;
   const loggedInUserId = req.user.id;
@@ -270,7 +300,17 @@ module.exports.getUserById = asyncHandler(async (req, res, next) => {
 });
 
 module.exports.getLoggedInUser = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
+  const userId = req.user.id;
+  let user = await User.findById(userId);
+  let profileView = await UserProfileView.findOne({
+    user: userId,
+  });
+  let views = (profileView?.views || []).map((view) => view.company);
+  let filteredViews = views.filter((id, index) => views.indexOf(id) === index);
+  const profileViewCount = filteredViews.length;
+  user = user.toObject();
+  user.profileViewCount = profileViewCount;
+
   return res.status(200).json(user);
 });
 
@@ -483,6 +523,24 @@ module.exports.markNotificationAsRead = asyncHandler(async (req, res, next) => {
     );
   });
   session.endSession();
+
+  return res.json({
+    success: true,
+  });
+});
+
+module.exports.reportAUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.body.userId).select(
+    'first_name notificationSettings'
+  );
+
+  if (user) {
+    // Send notification
+    await sendNotificationOnUserReported({
+      user: user,
+      company: req.user,
+    });
+  }
 
   return res.json({
     success: true,

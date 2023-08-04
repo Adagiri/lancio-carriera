@@ -10,8 +10,9 @@ const {
   getNotificationsForUser,
   markNotificationAsRead,
   updateProfile,
+  reportAUser,
 } = require('../controllers/users');
-const { protectUser, protect } = require('../middlewares/auth');
+const { protectUser, protect, protectCompany } = require('../middlewares/auth');
 const router = express.Router();
 
 router.get('/logged-in-account', protectUser, getLoggedInUser);
@@ -19,6 +20,9 @@ router.get('/dashboard-data', protectUser, getLoggedInUserDashboardData);
 router.get('/profile-views', protectUser, getLoggedInUserProfileViews);
 router.get('/notifications', protectUser, getNotificationsForUser);
 router.get('/:id', protect, getUserById);
+
+router.post('/report', protectCompany, reportAUser);
+
 
 router.put('/profile-setup', protectUser, profileSetup);
 router.put('/update-profile', protectUser, updateProfile);
