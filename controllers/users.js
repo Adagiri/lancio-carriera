@@ -15,6 +15,7 @@ const Company = require('../models/Company');
 const Job = require('../models/Job');
 const UserNotification = require('../models/UserNotification');
 const { deleteS3File } = require('../services/AwsService');
+const { sendPersonalizedEmailToUser } = require('../utils/messages');
 
 const cleanupStorage = async (args, userBeforeEditing) => {
   const resumeBeforeEditing = userBeforeEditing.resume;
@@ -301,7 +302,14 @@ module.exports.getUserById = asyncHandler(async (req, res, next) => {
 
 module.exports.getLoggedInUser = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
-  let user = await User.findById(userId);
+  let user = await User.findById(userId).populate({
+    path: 'savedJobs',
+    select: 'position',
+    populate: {
+      path: 'company',
+      select: 'company_phone photo', // Replace with the fields you want to populate from the 'Company' model
+    },
+  });
   let profileView = await UserProfileView.findOne({
     user: userId,
   });
@@ -542,6 +550,22 @@ module.exports.reportAUser = asyncHandler(async (req, res, next) => {
     });
   }
 
+  return res.json({
+    success: true,
+  });
+});
+
+module.exports.sendEmailToAUser = asyncHandler(async (req, res, next) => {
+  const userEmail = req.body.email;
+  const emailBody = req.body.message;
+  const company_name = req.user.company_name;
+  const subject = `Message from ${company_name}`;
+
+  await sendPersonalizedEmailToUser({
+    email: userEmail,
+    body: emailBody,
+    subject,
+  });
   return res.json({
     success: true,
   });

@@ -213,10 +213,16 @@ module.exports.getJobs = asyncHandler(async (req, res, next) => {
   const cursor = query.cursor;
   const limit = Math.abs(Number(query.limit)) || 10;
 
-  let data = await Job.find().sort({ _id: -1 }).populate('company').populate({
-    path: 'applicants.profile',
-    select: 'first_name last_name photo',
-  });
+  delete query.cursor;
+  delete query.limit;
+
+  let data = await Job.find({ ...query })
+    .sort({ _id: -1 })
+    .populate('company', 'company_name photo address')
+    .populate({
+      path: 'applicants.profile',
+      select: 'first_name last_name photo',
+    });
   // Sort the list
   data = data.sort((a, b) => b.createdAt - a.createdAt);
 
@@ -310,6 +316,7 @@ module.exports.getCompanyJobs = asyncHandler(async (req, res, next) => {
     count: data.length,
   });
 });
+
 
 module.exports.getNewApplicantsList = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
@@ -672,4 +679,50 @@ module.exports.reportJob = asyncHandler(async (req, res, next) => {
   });
 
   return res.status(200).json({ success: true, job: job });
+});
+
+module.exports.saveAJob = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+  const jobId = req.body.jobId;
+  // validate arguments
+  const job = await Job.findById(jobId);
+
+  if (!job) {
+    return next(
+      new ErrorResponse(404, {
+        messageEn: `Job with the ID: ${jobId} was not found`,
+        messageGe: `Job mit der ID: ${jobId} wurde nicht gefunden`,
+      })
+    );
+  }
+
+  const user = await User.findById(userId);
+  if (user.savedJobs.findIndex((id) => id.toString() === jobId) === -1) {
+    user.savedJobs.push(jobId);
+    await user.save();
+  }
+
+  return res.status(200).json({ success: true });
+});
+
+module.exports.unsaveAJob = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+  const jobId = req.body.jobId;
+  // validate arguments
+  const job = await Job.findById(jobId);
+
+  if (!job) {
+    return next(
+      new ErrorResponse(404, {
+        messageEn: `Job with the ID: ${jobId} was not found`,
+        messageGe: `Job mit der ID: ${jobId} wurde nicht gefunden`,
+      })
+    );
+  }
+
+  const user = await User.findById(userId);
+  user.savedJobs = user.savedJobs.filter((id) => id.toString() === jobId);
+  await user.save();
+
+  return res.status(200).json({ success: true });
 });

@@ -1,12 +1,6 @@
 **User EndPoints**
-Add Save Job endpoint
-Add Get Saved Jobs endpoint
-On fetching a job or some jobs, make sure to add isSaved field to each of them
 Add 'Get A Company's Job Posting' endpoint
 
-**Company Endpoints**
-Send Email to Job Seeker
-Add 'Get Accepted Applicants' endpoint
 
 # TODO
 checkout 'getProfileViewsDetail' function in the user controller

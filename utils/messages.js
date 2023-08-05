@@ -164,3 +164,29 @@ module.exports.sendWelcomeEmailForCompany = async ({ email }) => {
     console.log(error, 'error whilst sending welcome message to user');
   }
 };
+
+module.exports.sendPersonalizedEmailToUser = async ({
+  subject,
+  body,
+  email,
+}) => {
+  const message = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lancio Carriera</title>
+</head>
+<body>
+    <p>${body}</p>
+</body>
+</html>`;
+
+  try {
+    const emailArgs = generateEmailArguments(null, email, subject, message);
+    await sendEmail(emailArgs);
+  } catch (error) {
+    console.log(error, "error whilst sending message to a user's email");
+  }
+};

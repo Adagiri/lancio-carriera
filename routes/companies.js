@@ -9,6 +9,7 @@ const {
   getNotificationsForCompany,
   markNotificationAsRead,
   reportACompany,
+  getAcceptedApplicants,
 } = require('../controllers/companies');
 const { protectCompany, protectUser } = require('../middlewares/auth');
 const router = express.Router();
@@ -16,6 +17,7 @@ const router = express.Router();
 router.get('/dashboard-data', protectCompany, getLoggedInCompanyDashboardData);
 router.get('/logged-in-account', protectCompany, getLoggedInCompany);
 router.get('/notifications', protectCompany, getNotificationsForCompany);
+router.get('/get-accepted-applicants', protectCompany, getAcceptedApplicants);
 router.put('/profile-setup', protectCompany, profileSetup);
 router.put('/update-profile', protectCompany, updateProfile);
 router.post('/report', protectUser, reportACompany);

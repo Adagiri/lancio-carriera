@@ -77,6 +77,10 @@ const UserSchema = new mongoose.Schema({
   resetPasswordCode: String,
   resetPasswordTokenExpiry: Date,
 
+  savedJobs: {
+    type: [{ type: mongoose.ObjectId, ref: 'Job' }],
+  },
+
   unreadNotifications: {
     type: Number,
     default: 0,
