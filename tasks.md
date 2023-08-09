@@ -1,5 +1,4 @@
 **User EndPoints**
-Add 'Get A Company's Job Posting' endpoint
 
 
 # TODO

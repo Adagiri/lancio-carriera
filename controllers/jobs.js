@@ -8,6 +8,18 @@ const CompanyNotification = require('../models/CompanyNotification');
 const User = require('../models/User');
 const UserNotification = require('../models/UserNotification');
 
+const hasUserAppliedToJob = (userId, job) => {
+  return (
+    job.applicants.findIndex(
+      (applicant) => applicant.profile._id.toString() === userId
+    ) !== -1
+  );
+};
+
+const isJobSavedByUser = (jobId, savedJobs) => {
+  return savedJobs.findIndex((id) => id.toString() === jobId.toString()) !== -1;
+};
+
 const isAnApplicant = (applicantsIds, userId) => {
   return applicantsIds.map((id) => id.toString()).indexOf(userId) === -1
     ? false
@@ -235,6 +247,19 @@ module.exports.getJobs = asyncHandler(async (req, res, next) => {
   const hasNextPage = !!nextPageCursor;
   data = data.slice(start, end);
 
+  if (req.user.accountType === 'personal') {
+    const userId = req.user.id;
+    const userData = await User.findById(userId).select('savedJobs');
+
+    data = data.map((job) => {
+      job = job.toObject();
+      job.hasUserApplied = hasUserAppliedToJob(userId, job);
+      job.isJobSaved = isJobSavedByUser(job._id, userData.savedJobs);
+
+      return job;
+    });
+  }
+
   return res.json({
     hasNextPage,
     nextPageCursor,
@@ -246,10 +271,12 @@ module.exports.getJobs = asyncHandler(async (req, res, next) => {
 module.exports.getJobById = asyncHandler(async (req, res, next) => {
   const jobId = req.params.id;
 
-  let job = await Job.findById(jobId).populate('company').populate({
-    path: 'applicants.profile',
-    select: 'first_name last_name age photo country state city',
-  });
+  let job = await Job.findById(jobId)
+    .populate('company', 'company_name photo address')
+    .populate({
+      path: 'applicants.profile',
+      select: 'first_name last_name age photo country state city',
+    });
 
   if (!job) {
     return next(
@@ -261,6 +288,13 @@ module.exports.getJobById = asyncHandler(async (req, res, next) => {
   }
 
   job = job.toObject();
+  if (req.user.accountType === 'personal') {
+    const userId = req.user.id;
+    const userData = await User.findById(userId).select('savedJobs');
+
+    job.hasUserApplied = hasUserAppliedToJob(userId, job);
+    job.isJobSaved = isJobSavedByUser(job._id, userData.savedJobs);
+  }
 
   const applicantsIds = job.applicants
     .filter((applicant) => applicant.profile !== null)
@@ -316,7 +350,6 @@ module.exports.getCompanyJobs = asyncHandler(async (req, res, next) => {
     count: data.length,
   });
 });
-
 
 module.exports.getNewApplicantsList = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
@@ -437,7 +470,7 @@ module.exports.getUserJobs = asyncHandler(async (req, res, next) => {
     'applicants.createdAt': { $gt: targetTime },
     'applicants.profile': userId,
   })
-    .populate('company')
+    .populate('company', 'company_name photo address')
     .populate({
       path: 'applicants.profile',
       select: 'first_name last_name photo',
@@ -456,6 +489,15 @@ module.exports.getUserJobs = asyncHandler(async (req, res, next) => {
   const nextPageCursor = data[end]?._id;
   const hasNextPage = !!nextPageCursor;
   data = data.slice(start, end);
+
+  const userData = await User.findById(userId).select('savedJobs');
+  data = data.map((job) => {
+    job = job.toObject();
+    job.hasUserApplied = hasUserAppliedToJob(userId, job);
+    job.isJobSaved = isJobSavedByUser(job._id, userData.savedJobs);
+
+    return job;
+  });
 
   return res.json({
     hasNextPage,
