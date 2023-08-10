@@ -9,7 +9,6 @@ const User = require('../models/User');
 const UserNotification = require('../models/UserNotification');
 const { hasUserAppliedToJob, isJobSavedByUser } = require('../utils/general');
 
-
 const isAnApplicant = (applicantsIds, userId) => {
   return applicantsIds.map((id) => id.toString()).indexOf(userId) === -1
     ? false
@@ -226,7 +225,7 @@ module.exports.getJobs = asyncHandler(async (req, res, next) => {
     )
     .populate({
       path: 'applicants.profile',
-      select: 'first_name last_name photo',
+      select: 'first_name last_name photo age state country city',
     });
   // Sort the list
   data = data.sort((a, b) => b.createdAt - a.createdAt);
@@ -322,7 +321,7 @@ module.exports.getCompanyJobs = asyncHandler(async (req, res, next) => {
     .populate('company')
     .populate({
       path: 'applicants.profile',
-      select: 'first_name last_name photo',
+      select: 'first_name last_name photo age state country city',
     });
   // Sort the list
   data = data.sort((a, b) => b.createdAt - a.createdAt);
@@ -466,7 +465,7 @@ module.exports.getUserJobs = asyncHandler(async (req, res, next) => {
     .populate('company', 'company_name photo address state country city')
     .populate({
       path: 'applicants.profile',
-      select: 'first_name last_name photo',
+      select: 'first_name last_name photo age state country city',
     });
 
   const totalCount = data.length;
@@ -760,4 +759,12 @@ module.exports.unsaveAJob = asyncHandler(async (req, res, next) => {
   await user.save();
 
   return res.status(200).json({ success: true });
+});
+
+module.exports.closeAJob = asyncHandler(async (req, res, next) => {
+  const jobId = req.body.jobId;
+  // validate arguments
+  const job = await Job.findByIdAndUpdate(jobId, { isClosed: true }, {new: true});
+
+  return res.status(200).json({ success: true, job: job });
 });

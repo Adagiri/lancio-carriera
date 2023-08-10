@@ -305,10 +305,16 @@ module.exports.getLoggedInUser = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
   let user = await User.findById(userId).populate({
     path: 'savedJobs',
-    populate: {
-      path: 'company',
-      select: 'company_phone photo', // Replace with the fields you want to populate from the 'Company' model
-    },
+    populate: [
+      {
+        path: 'company',
+        select: 'company_phone photo', // Replace with the fields you want to populate from the 'Company' model
+      },
+      {
+        path: 'applicants.profile',
+        select: 'first_name last_name photo age state country city',
+      },
+    ],
   });
 
   let profileView = await UserProfileView.findOne({

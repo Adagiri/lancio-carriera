@@ -15,6 +15,7 @@ const {
   unsaveAJob,
   saveAJob,
   getJobsPostedByCompany,
+  closeAJob,
 } = require('../controllers/jobs');
 const { protectCompany, protectUser, protect } = require('../middlewares/auth');
 const router = express.Router();
@@ -35,6 +36,7 @@ router.get('/:id', protect, getJobById);
 router.post('/', protectCompany, postJob);
 router.put('/', protectCompany, editJob);
 router.put('/apply', protectUser, applyToJob);
+router.put('/close-job', protectCompany, closeAJob);
 router.post('/report', protectUser, reportJob);
 router.post('/save', protectUser, saveAJob);
 router.post('/unsave', protectUser, unsaveAJob);
