@@ -246,12 +246,15 @@ const getProfileViewsGraphData = async ({ userId, targetTime, duration }) => {
   return data;
 };
 
+
 const sendNotificationOnUserReported = async ({ user, company }) => {
   const arguments = {
     owner: user._id,
     case: 'User Reported',
     title: company.company_name,
+    titleGe: company.company_name,
     body: `Reported you`,
+    bodyGe: `Habe Dich gemeldet`,
     company: company._id,
     subject: company._id,
     subjectType: 'Company',

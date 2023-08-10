@@ -222,6 +222,11 @@ const sendNotificationOnMessageReceived = async ({
       ? `Message: ${newMessage.text}`
       : `Sent a file ${fileName}`;
 
+  const bodyGe =
+    newMessage.type === 'text'
+      ? `Nachricht: ${newMessage.text}`
+      : `Habe eine Datei gesendet ${fileName}`;
+
   if (isCompany) {
     // Save notification for User(Job seeker)
     if (user.notificationSettings.messages) {
@@ -242,7 +247,9 @@ const sendNotificationOnMessageReceived = async ({
           owner: user._id,
           case: 'Message Received',
           title: company.company_name,
+          titleGe: company.company_name,
           body: body,
+          bodyGe: bodyGe,
           company: company._id,
           subject: chat._id,
           subjectType: 'Chat',
@@ -286,7 +293,9 @@ const sendNotificationOnMessageReceived = async ({
           owner: company._id,
           case: 'Message Received',
           title: user.first_name,
+          titleGe: user.first_name,
           body: body,
+          bodyGe: bodyGe,
           user: user._id,
           subject: chat._id,
           subjectType: 'Chat',

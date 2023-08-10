@@ -21,7 +21,9 @@ const sendNotificationOnApplicantApplied = async ({ user, job }) => {
     owner: company._id,
     case: 'Applicant Applied',
     title: user.first_name,
+    titleGe: user.first_name,
     body: `Applied to your job: ${job.position}`,
+    bodyGe: `Auf Ihren Job angewendet: ${job.position}`,
     user: user._id,
     subject: job._id,
     subjectType: 'Job',
@@ -47,13 +49,16 @@ const sendNotificationOnApplicantApplied = async ({ user, job }) => {
   }
 };
 
+
 const sendNotificationOnJobReported = async ({ user, job }) => {
   const company = job.company;
   const arguments = {
     owner: company._id,
     case: 'Job Reported',
     title: user.first_name,
+    titleGe: user.first_name,
     body: `Reported your job: ${job.position}`,
+    bodyGe: `Habe deinen Job gemeldet: ${job.position}`,
     user: user._id,
     subject: job._id,
     subjectType: 'Job',
@@ -79,13 +84,16 @@ const sendNotificationOnJobReported = async ({ user, job }) => {
   }
 };
 
+
 const sendNotificationOnJobPosted = async (job) => {
   const company = job.company;
   const arguments = {
     owner: company._id,
     case: 'Job Posted',
     title: job.position,
+    titleGe: job.position,
     body: `Your job post is live`,
+    bodyGe: `Ihre Stellenausschreibung ist online`,
     subject: job._id,
     subjectType: 'Job',
   };
@@ -117,7 +125,9 @@ const sendNotificationOnJobClosed = async (job) => {
     owner: company._id,
     case: 'Job Closed',
     title: job.position,
+    titleGe: job.position,
     body: `You closed this position`,
+    bodyGe: `Sie haben diese Position geschlossen`,
     subject: job._id,
     subjectType: 'Job',
   };
@@ -151,7 +161,9 @@ const sendNotificationOnJobClosed = async (job) => {
       owner: applicant.profile._id,
       case: 'Job Closed',
       title: job.position,
+      titleGe: job.position,
       body: `This position is now closed`,
+      bodyGe: `Diese Position ist nun geschlossen`,
       subject: job._id,
       subjectType: 'Job',
       company: company._id,
@@ -175,21 +187,21 @@ const sendNotificationOnJobClosed = async (job) => {
   session.endSession();
 };
 
+
 const sendNotificationOnApplicantAccepted = async ({ job, applicant }) => {
   const arguments = {
     owner: applicant.profile._id,
     case: 'Application Accepted',
     title: 'Application accepted',
+    titleGe: 'Bewerbung angenommen',
     body: `Application for ${job.position} has been accepted`,
+    bodyGe: `Bewerbung für ${job.position} wurde angenommen`,
     subject: job._id,
     subjectType: 'Job',
     company: job.company._id,
   };
 
-  console.log(applicant, 'applicant');
-
   if (applicant.profile?.notificationSettings?.onApplicationAccepted) {
-    console.log(applicant, 'applicant');
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
       await User.findByIdAndUpdate(

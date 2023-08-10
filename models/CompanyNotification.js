@@ -28,7 +28,17 @@ const CompanyNotificationSchema = new mongoose.Schema({
     required: true,
   },
 
+  titleGe: {
+    type: String,
+    required: true,
+  },
+
   body: {
+    type: String,
+    required: true,
+  },
+
+  bodyGe: {
     type: String,
     required: true,
   },
