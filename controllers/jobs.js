@@ -7,18 +7,8 @@ const Company = require('../models/Company');
 const CompanyNotification = require('../models/CompanyNotification');
 const User = require('../models/User');
 const UserNotification = require('../models/UserNotification');
+const { hasUserAppliedToJob, isJobSavedByUser } = require('../utils/general');
 
-const hasUserAppliedToJob = (userId, job) => {
-  return (
-    job.applicants.findIndex(
-      (applicant) => applicant.profile._id.toString() === userId
-    ) !== -1
-  );
-};
-
-const isJobSavedByUser = (jobId, savedJobs) => {
-  return savedJobs.findIndex((id) => id.toString() === jobId.toString()) !== -1;
-};
 
 const isAnApplicant = (applicantsIds, userId) => {
   return applicantsIds.map((id) => id.toString()).indexOf(userId) === -1
@@ -230,7 +220,10 @@ module.exports.getJobs = asyncHandler(async (req, res, next) => {
 
   let data = await Job.find({ ...query })
     .sort({ _id: -1 })
-    .populate('company', 'company_name photo address')
+    .populate(
+      'company',
+      'company_name photo address state country city state country city'
+    )
     .populate({
       path: 'applicants.profile',
       select: 'first_name last_name photo',
@@ -272,7 +265,7 @@ module.exports.getJobById = asyncHandler(async (req, res, next) => {
   const jobId = req.params.id;
 
   let job = await Job.findById(jobId)
-    .populate('company', 'company_name photo address')
+    .populate('company', 'company_name photo address state country city')
     .populate({
       path: 'applicants.profile',
       select: 'first_name last_name age photo country state city',
@@ -470,7 +463,7 @@ module.exports.getUserJobs = asyncHandler(async (req, res, next) => {
     'applicants.createdAt': { $gt: targetTime },
     'applicants.profile': userId,
   })
-    .populate('company', 'company_name photo address')
+    .populate('company', 'company_name photo address state country city')
     .populate({
       path: 'applicants.profile',
       select: 'first_name last_name photo',
@@ -763,7 +756,7 @@ module.exports.unsaveAJob = asyncHandler(async (req, res, next) => {
   }
 
   const user = await User.findById(userId);
-  user.savedJobs = user.savedJobs.filter((id) => id.toString() === jobId);
+  user.savedJobs = user.savedJobs.filter((id) => id.toString() !== jobId);
   await user.save();
 
   return res.status(200).json({ success: true });

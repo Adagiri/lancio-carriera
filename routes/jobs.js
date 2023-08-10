@@ -37,7 +37,7 @@ router.put('/', protectCompany, editJob);
 router.put('/apply', protectUser, applyToJob);
 router.post('/report', protectUser, reportJob);
 router.post('/save', protectUser, saveAJob);
-router.put('/unsave', protectUser, unsaveAJob);
+router.post('/unsave', protectUser, unsaveAJob);
 router.put('/accept-applicant', protectCompany, acceptApplicant);
 
 module.exports = router;

@@ -99,3 +99,15 @@ module.exports.generateEncryptedPassword = async (password) => {
 
   return encryptedPassword;
 };
+
+module.exports.hasUserAppliedToJob = (userId, job) => {
+  return (
+    job.applicants.findIndex(
+      (applicant) => applicant.profile._id.toString() === userId
+    ) !== -1
+  );
+};
+
+module.exports.isJobSavedByUser = (jobId, savedJobs) => {
+  return savedJobs.findIndex((id) => id.toString() === jobId.toString()) !== -1;
+};

@@ -16,6 +16,7 @@ const Job = require('../models/Job');
 const UserNotification = require('../models/UserNotification');
 const { deleteS3File } = require('../services/AwsService');
 const { sendPersonalizedEmailToUser } = require('../utils/messages');
+const { hasUserAppliedToJob } = require('../utils/general');
 
 const cleanupStorage = async (args, userBeforeEditing) => {
   const resumeBeforeEditing = userBeforeEditing.resume;
@@ -304,12 +305,12 @@ module.exports.getLoggedInUser = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
   let user = await User.findById(userId).populate({
     path: 'savedJobs',
-    select: 'position',
     populate: {
       path: 'company',
       select: 'company_phone photo', // Replace with the fields you want to populate from the 'Company' model
     },
   });
+
   let profileView = await UserProfileView.findOne({
     user: userId,
   });
@@ -318,6 +319,15 @@ module.exports.getLoggedInUser = asyncHandler(async (req, res, next) => {
   const profileViewCount = filteredViews.length;
   user = user.toObject();
   user.profileViewCount = profileViewCount;
+
+  user.savedJobs = user.savedJobs.map((job) => {
+    job.hasUserApplied = hasUserAppliedToJob(userId, job);
+    job.isJobSaved = true;
+
+    return job;
+  });
+
+  console.log(user.savedJobs);
 
   return res.status(200).json(user);
 });
