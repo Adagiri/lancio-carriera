@@ -29,8 +29,9 @@ router.get(
   getNewApplicantsCount
 );
 
-router.get('/user', protectUser, getUserJobs);
 router.get('/', protect, getJobs);
+router.get('/user', protectUser, getUserJobs);
+router.get('/by-a-company/:companyId', protect, getJobsPostedByCompany);
 router.get('/:id', protect, getJobById);
 
 router.post('/', protectCompany, postJob);

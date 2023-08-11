@@ -49,7 +49,6 @@ const sendNotificationOnApplicantApplied = async ({ user, job }) => {
   }
 };
 
-
 const sendNotificationOnJobReported = async ({ user, job }) => {
   const company = job.company;
   const arguments = {
@@ -83,7 +82,6 @@ const sendNotificationOnJobReported = async ({ user, job }) => {
     session.endSession();
   }
 };
-
 
 const sendNotificationOnJobPosted = async (job) => {
   const company = job.company;
@@ -186,7 +184,6 @@ const sendNotificationOnJobClosed = async (job) => {
   });
   session.endSession();
 };
-
 
 const sendNotificationOnApplicantAccepted = async ({ job, applicant }) => {
   const arguments = {
@@ -776,7 +773,26 @@ module.exports.unsaveAJob = asyncHandler(async (req, res, next) => {
 module.exports.closeAJob = asyncHandler(async (req, res, next) => {
   const jobId = req.body.jobId;
   // validate arguments
-  const job = await Job.findByIdAndUpdate(jobId, { isClosed: true }, {new: true});
+  const job = await Job.findByIdAndUpdate(
+    jobId,
+    { isClosed: true },
+    { new: true }
+  );
 
   return res.status(200).json({ success: true, job: job });
+});
+
+module.exports.getJobsPostedByCompany = asyncHandler(async (req, res, next) => {
+  let data = await Job.find({
+    company: req.params.companyId,
+  })
+    .populate('company')
+    .populate({
+      path: 'applicants.profile',
+      select: 'first_name last_name photo age state country city',
+    });
+
+  return res.json({
+    jobs: data,
+  });
 });
