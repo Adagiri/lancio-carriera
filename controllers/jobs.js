@@ -792,6 +792,19 @@ module.exports.getJobsPostedByCompany = asyncHandler(async (req, res, next) => {
       select: 'first_name last_name photo age state country city',
     });
 
+  if (req.user.accountType === 'personal') {
+    const userId = req.user.id;
+    const userData = await User.findById(userId).select('savedJobs');
+
+    data = data.map((job) => {
+      job = job.toObject();
+      job.hasUserApplied = hasUserAppliedToJob(userId, job);
+      job.isJobSaved = isJobSavedByUser(job._id, userData.savedJobs);
+
+      return job;
+    });
+  }
+
   return res.json({
     jobs: data,
   });
