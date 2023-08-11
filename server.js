@@ -106,9 +106,26 @@ io.on('connection', (socket) => {
       });
   });
 
-  socket.on('joinChat', ({ chatId, userId }) => {
+  socket.on('joinChat', async ({ chatId, userId }) => {
     console.log('A user joined chat');
     socket.join(chatId);
+
+    const chat = await Chat.findById(chatId).select('company user');
+
+    const companyId = chat.company;
+    const jobSeekerId = chat.user;
+    const isCompany = userId.toString() === companyId.toString();
+    const isUser = userId.toString() === jobSeekerId.toString();
+
+    if (isCompany) {
+      chat.companyUnreadMessages = 0;
+    }
+
+    if (isUser) {
+      chat.userUnreadMessages = 0;
+    }
+
+    await chat.save();
   });
 
   // Handle typing status
