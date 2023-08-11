@@ -11,6 +11,7 @@ const asyncHandler = require('../middlewares/async');
 const Company = require('../models/Company');
 const Job = require('../models/Job');
 const CompanyNotification = require('../models/CompanyNotification');
+const ErrorResponse = require('../utils/errorResponse');
 
 const getTotalApplicationsCount = async (userId, currentTime) => {
   const result = await Job.aggregate([
@@ -225,6 +226,22 @@ const sendNotificationOnCompanyReported = async ({ user, company }) => {
     session.endSession();
   }
 };
+
+module.exports.getCompanyById = asyncHandler(async (req, res, next) => {
+  const companyId = req.params.id;
+  const company = await Company.findById(companyId);
+
+  if (!company) {
+    return next(
+      new ErrorResponse(404, {
+        messageEn: `Company with the ID: ${companyId} was not found`,
+        messageGe: `Firma mit der ID: ${companyId} wurde nicht gefunden`,
+      })
+    );
+  }
+
+  return res.status(200).json(company);
+});
 
 module.exports.getLoggedInCompany = asyncHandler(async (req, res, next) => {
   let company = await Company.findById(req.user.id);
