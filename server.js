@@ -106,7 +106,7 @@ io.on('connection', (socket) => {
       });
   });
 
-  socket.on('joinChat', ({ chatId }) => {
+  socket.on('joinChat', ({ chatId, userId }) => {
     console.log('A user joined chat');
     socket.join(chatId);
   });

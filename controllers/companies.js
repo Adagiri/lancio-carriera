@@ -258,67 +258,80 @@ module.exports.getLoggedInCompany = asyncHandler(async (req, res, next) => {
 });
 
 module.exports.getAcceptedApplicants = asyncHandler(async (req, res, next) => {
-  const applicants = await Job.aggregate([
-    // Match documents where at least one applicant has the status 'Accepted'
-    {
-      $match: {
-        company: mongoose.Types.ObjectId(req.user.id),
-        'applicants.status': 'Accepted',
-      },
+const applicants = await Job.aggregate([
+  // Match documents where at least one applicant has the status 'Accepted'
+  {
+    $match: {
+      company: mongoose.Types.ObjectId(req.user.id),
+      'applicants.status': 'Accepted',
     },
-    // Unwind the 'applicants' array to work with individual applicant documents
-    {
-      $unwind: '$applicants',
+  },
+  // Unwind the 'applicants' array to work with individual applicant documents
+  {
+    $unwind: '$applicants',
+  },
+  // Match only applicants with status 'Accepted'
+  {
+    $match: {
+      'applicants.status': 'Accepted',
     },
-    // Match only applicants with status 'Accepted'
-    {
-      $match: {
-        'applicants.status': 'Accepted',
-      },
+  },
+  // Lookup to get the 'User' document for each applicant
+  {
+    $lookup: {
+      from: 'users',
+      localField: 'applicants.profile',
+      foreignField: '_id',
+      as: 'user',
     },
-    // Lookup to get the 'User' document for each applicant
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'applicants.profile',
-        foreignField: '_id',
-        as: 'user',
-      },
+  },
+  // Lookup to get the 'Company' document for each job
+  {
+    $lookup: {
+      from: 'companies',
+      localField: 'company',
+      foreignField: '_id',
+      as: 'company',
     },
-    // Lookup to get the 'Company' document for each job
-    {
-      $lookup: {
-        from: 'companies',
-        localField: 'company',
-        foreignField: '_id',
-        as: 'company',
-      },
-    },
-    // Unwind the 'user' and 'company' arrays to work with individual documents
-    {
-      $unwind: '$user',
-    },
-    {
-      $unwind: '$company',
-    },
-    // Project to shape the output document with the desired fields
-    {
-      $project: {
-        _id: '$applicants._id',
-        firstName: '$user.first_name',
-        email: '$user.email',
-        photo: '$user.photo',
-        job: {
-          _id: '$_id',
-          position: '$position',
-          company: {
-            companyId: '$company._id',
-            name: '$company.name',
+  },
+  // Unwind the 'user' and 'company' arrays to work with individual documents
+  {
+    $unwind: '$user',
+  },
+  {
+    $unwind: '$company',
+  },
+  // Project to shape the output document with the desired fields
+  {
+    $project: {
+      _id: '$applicants._id',
+      user: {
+        $arrayToObject: {
+          $filter: {
+            input: { $objectToArray: '$user' },
+            cond: {
+              $not: {
+                $in: ['$$this.k', ['password', 'notificationSettings']],
+              },
+            },
           },
         },
       },
+      job: {
+        _id: '$_id',
+        position: '$position',
+        company: {
+          companyId: '$company._id',
+          name: '$company.name',
+        },
+      },
     },
-  ]);
+  },
+]);
+
+// Now 'applicants' contains all fields of the applicant with 'password' and 'notificationSettings' omitted from the user object
+
+
   return res.status(200).json(applicants);
 });
 module.exports.getLoggedInCompanyDashboardData = asyncHandler(

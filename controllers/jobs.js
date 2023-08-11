@@ -389,6 +389,13 @@ module.exports.getNewApplicantsList = asyncHandler(async (req, res, next) => {
     },
   ]);
 
+  data = data.map((user) => {
+    delete user.profile.password;
+    delete user.profile.notificationSettings;
+
+    return user;
+  });
+
   const totalCount = data.length;
 
   // // Sort the list
