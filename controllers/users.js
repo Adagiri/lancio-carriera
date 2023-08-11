@@ -127,24 +127,31 @@ const getProfileViewsDetail = async (userId, targetTime) => {
   );
 
   let summary = 'No views yet';
+  let summaryGe = 'Noch keine Aufrufe';
 
   if (recentView.length === 1) {
     summary = `${recentView[0].company_name} viewed your profile`;
+    summaryGe = `${recentView[0].company_name} hat Ihr Profil angesehen`;
   }
 
   if (recentView.length === 2) {
     summary = `${recentView[0].company_name} and ${recentView[1].company_name} viewed your profile`;
+    summaryGe = `${recentView[0].company_name} und ${recentView[1].company_name} haben Ihr Profil angesehen`;
   }
 
   if (recentView.length > 2) {
     summary = `${recentView[0].company_name} and ${
       viewCount - 1
     } other persons viewed your profile`;
+    summaryGe = `${recentView[0].company_name} und ${
+      viewCount - 1
+    } weitere Personen haben Ihr Profil angesehen`;
   }
 
   return {
     count: viewCount,
     summary: summary,
+    summaryGe: summaryGe,
     recentView: recentView,
   };
 };
@@ -245,7 +252,6 @@ const getProfileViewsGraphData = async ({ userId, targetTime, duration }) => {
 
   return data;
 };
-
 
 const sendNotificationOnUserReported = async ({ user, company }) => {
   const arguments = {
