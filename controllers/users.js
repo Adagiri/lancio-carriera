@@ -562,6 +562,37 @@ module.exports.markNotificationAsRead = asyncHandler(async (req, res, next) => {
   });
 });
 
+module.exports.markAllNotificationsAsRead = asyncHandler(
+  async (req, res, next) => {
+    const userId = req.user.id;
+    const session = await mongoose.startSession();
+    await session.withTransaction(async () => {
+      // Reduce user's notification count
+      await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: { unreadNotifications: 0 },
+        },
+        { session }
+      );
+
+      // Mark notification as read
+      await UserNotification.updateMany(
+        { owner: userId },
+        {
+          hasBeenRead: true,
+        },
+        { session }
+      );
+    });
+    session.endSession();
+
+    return res.json({
+      success: true,
+    });
+  }
+);
+
 module.exports.reportAUser = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.body.userId).select(
     'first_name notificationSettings'

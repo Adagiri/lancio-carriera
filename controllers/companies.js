@@ -258,79 +258,78 @@ module.exports.getLoggedInCompany = asyncHandler(async (req, res, next) => {
 });
 
 module.exports.getAcceptedApplicants = asyncHandler(async (req, res, next) => {
-const applicants = await Job.aggregate([
-  // Match documents where at least one applicant has the status 'Accepted'
-  {
-    $match: {
-      company: mongoose.Types.ObjectId(req.user.id),
-      'applicants.status': 'Accepted',
+  const applicants = await Job.aggregate([
+    // Match documents where at least one applicant has the status 'Accepted'
+    {
+      $match: {
+        company: mongoose.Types.ObjectId(req.user.id),
+        'applicants.status': 'Accepted',
+      },
     },
-  },
-  // Unwind the 'applicants' array to work with individual applicant documents
-  {
-    $unwind: '$applicants',
-  },
-  // Match only applicants with status 'Accepted'
-  {
-    $match: {
-      'applicants.status': 'Accepted',
+    // Unwind the 'applicants' array to work with individual applicant documents
+    {
+      $unwind: '$applicants',
     },
-  },
-  // Lookup to get the 'User' document for each applicant
-  {
-    $lookup: {
-      from: 'users',
-      localField: 'applicants.profile',
-      foreignField: '_id',
-      as: 'user',
+    // Match only applicants with status 'Accepted'
+    {
+      $match: {
+        'applicants.status': 'Accepted',
+      },
     },
-  },
-  // Lookup to get the 'Company' document for each job
-  {
-    $lookup: {
-      from: 'companies',
-      localField: 'company',
-      foreignField: '_id',
-      as: 'company',
+    // Lookup to get the 'User' document for each applicant
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'applicants.profile',
+        foreignField: '_id',
+        as: 'user',
+      },
     },
-  },
-  // Unwind the 'user' and 'company' arrays to work with individual documents
-  {
-    $unwind: '$user',
-  },
-  {
-    $unwind: '$company',
-  },
-  // Project to shape the output document with the desired fields
-  {
-    $project: {
-      _id: '$applicants._id',
-      user: {
-        $arrayToObject: {
-          $filter: {
-            input: { $objectToArray: '$user' },
-            cond: {
-              $not: {
-                $in: ['$$this.k', ['password', 'notificationSettings']],
+    // Lookup to get the 'Company' document for each job
+    {
+      $lookup: {
+        from: 'companies',
+        localField: 'company',
+        foreignField: '_id',
+        as: 'company',
+      },
+    },
+    // Unwind the 'user' and 'company' arrays to work with individual documents
+    {
+      $unwind: '$user',
+    },
+    {
+      $unwind: '$company',
+    },
+    // Project to shape the output document with the desired fields
+    {
+      $project: {
+        _id: '$applicants._id',
+        user: {
+          $arrayToObject: {
+            $filter: {
+              input: { $objectToArray: '$user' },
+              cond: {
+                $not: {
+                  $in: ['$$this.k', ['password', 'notificationSettings']],
+                },
               },
             },
           },
         },
-      },
-      job: {
-        _id: '$_id',
-        position: '$position',
-        company: {
-          companyId: '$company._id',
-          name: '$company.name',
+        job: {
+          _id: '$_id',
+          position: '$position',
+          company: {
+            companyId: '$company._id',
+            name: '$company.name',
+          },
         },
       },
     },
-  },
-]);
+  ]);
 
-// Now 'applicants' contains all fields of the applicant with 'password' and 'notificationSettings' omitted from the user object
-
+  // Now 'applicants' contains all fields of the applicant with 'password' and 'notificationSettings' omitted from the user object
 
   return res.status(200).json(applicants);
 });
@@ -510,3 +509,34 @@ module.exports.reportACompany = asyncHandler(async (req, res, next) => {
     success: true,
   });
 });
+
+module.exports.markAllNotificationsAsRead = asyncHandler(
+  async (req, res, next) => {
+    const companyId = req.user.id;
+    const session = await mongoose.startSession();
+    await session.withTransaction(async () => {
+      // Reduce user's notification count
+      await Company.findByIdAndUpdate(
+        companyId,
+        {
+          $set: { unreadNotifications: 0 },
+        },
+        { session }
+      );
+
+      // Mark notification as read
+      await CompanyNotification.updateMany(
+        { owner: companyId },
+        {
+          hasBeenRead: true,
+        },
+        { session }
+      );
+    });
+    session.endSession();
+
+    return res.json({
+      success: true,
+    });
+  }
+);

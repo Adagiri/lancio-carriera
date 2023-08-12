@@ -11,6 +11,7 @@ const {
   markNotificationAsRead,
   reportACompany,
   getAcceptedApplicants,
+  markAllNotificationsAsRead,
 } = require('../controllers/companies');
 const { protectCompany, protectUser, protect } = require('../middlewares/auth');
 const router = express.Router();
@@ -32,5 +33,10 @@ router.put(
 );
 
 router.put('/mark-notification', protectCompany, markNotificationAsRead);
+router.put(
+  '/mark-all-notifications',
+  protectCompany,
+  markAllNotificationsAsRead
+);
 
 module.exports = router;
