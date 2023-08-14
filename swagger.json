@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://lancio.us-east-1.elasticbeanstalk.com/api/v1"
+      "url": "https://apis-sandbox.lanciocarriera.com/api/v1"
     }
   ],
   "tags": [
@@ -24,6 +24,9 @@
     },
     {
       "name": "Jobs"
+    },
+    {
+      "name": "Chats"
     }
   ],
   "paths": {
@@ -97,7 +100,7 @@
                 "type": "object",
                 "example": {
                   "idToken": "123456778899",
-                  "email": "adagiri1@gmail.com",
+                  "email": "krowdee20@gmail.com",
                   "company_name": "neurona",
                   "accountType": "company"
                 }
@@ -304,6 +307,151 @@
         }
       }
     },
+    "/users/64c787c87a116886bbe5bd9b": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get a User",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users/profile-views": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get profile views for logged-in user",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTI2NmJiNTQ0MjM3YTVmMTgwMWYyYSIsImVtYWlsIjoiYWRhZ2lyaTE0MTdAZ21haWwuY29tIiwiaWF0IjoxNjg3MzE2MTYxLCJleHAiOjE2ODk5MDgxNjF9.VkZPGMo5I2I7lF6EWtdszczaiA-HeY-4265Kky5Z3zE"
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "null"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
+          },
+          {
+            "name": "duration",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Accepted Values are: 'thisWeek', 'thisMonth', 'today'. Ommiting this field from the query results in all matches; that is: all profile views will be returned.",
+            "example": "thisWeek"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users/dashboard-data": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get dashboard data",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
+          },
+          {
+            "name": "duration",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "thisMonth"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users/notifications": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get Notifications",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "64ca94f5cb2077b52cf0c05f"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "2"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
     "/users/profile-setup": {
       "put": {
         "tags": ["User"],
@@ -352,6 +500,228 @@
         }
       }
     },
+    "/users/update-profile": {
+      "put": {
+        "tags": ["User"],
+        "summary": "Update Profile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "sex": "male",
+                  "age": 30,
+                  "phone": "+2348037296906",
+                  "country": "Germany",
+                  "state": "Berlin",
+                  "city": "Berlin",
+                  "address": "Musterstraße 42, 10115 Berlin, Germany",
+                  "photo": "https://filerq.s3.amazonaws.com/test/profile-photo/846988642878739224388841543531.jpeg",
+                  "bio": "THis is my bio",
+                  "resume": [
+                    "https://lancio-carriera.s3.amazon.com/resume/0299292828828828"
+                  ],
+                  "softSkills": ["speaking", "reading", "writing"]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users/edit-notification-settings": {
+      "put": {
+        "tags": ["User"],
+        "summary": "Edit notification settings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "onMessageReceived": true,
+                  "onApplicantAccepted": true,
+                  "onJobClosed": false
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users/mark-notification": {
+      "put": {
+        "tags": ["User"],
+        "summary": "Mark a notification as READ",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "notificationId": "64ca959be0f7fb6b9b0484ff"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users/mark-all-notifications": {
+      "put": {
+        "tags": ["User"],
+        "summary": "Mark all notifications as READ",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users/report": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Report a User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "userId": "64c787c87a116886bbe5bd9b"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users/send-email": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Email a User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "ibrahimridwan477@gmail.com",
+                  "message": "Please respond to the offer on the app"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
     "/companies/logged-in-account": {
       "get": {
         "tags": ["Company"],
@@ -363,7 +733,127 @@
             "schema": {
               "type": "string"
             },
-            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0N2E3OTczY2Y2ODU5ZWEzZjNhZDQ4MiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2ODU3NTMwNTgsImV4cCI6MTY4ODM0NTA1OH0.qgoo0ioMZKqyNwCY9s5Aql6xv9FwHnpwp5liNKamNV0"
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/companies/64c7883d7a116886bbe5bda8": {
+      "get": {
+        "tags": ["Company"],
+        "summary": "Get a Company",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/companies/dashboard-data": {
+      "get": {
+        "tags": ["Company"],
+        "summary": "Get dashboard data",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTI1YjlhY2MzZDNjN2NkZTM5YmIzNiIsImVtYWlsIjoiYWRhZ2lyaTE0MTdAZ21haWwuY29tIiwiaWF0IjoxNjg4MDU4MzA4LCJleHAiOjE2OTA2NTAzMDh9.vVhAoGmv_VkkiPP9ttOuYRRBGcigKqJd0r90rpoKbuY"
+          },
+          {
+            "name": "duration",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "thisMonth"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/companies/notifications": {
+      "get": {
+        "tags": ["Company"],
+        "summary": "Get Notifications",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "null"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "6"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/companies/get-accepted-applicants": {
+      "get": {
+        "tags": ["Company"],
+        "summary": "Get accepted applicants",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
           }
         ],
         "responses": {
@@ -424,6 +914,192 @@
         }
       }
     },
+    "/companies/update-profile": {
+      "put": {
+        "tags": ["Company"],
+        "summary": "Update profile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "companyType": "Technology",
+                  "employeeCount": "0 - 50",
+                  "phone": "+2348037296906",
+                  "country": "Germany",
+                  "state": "Berlin",
+                  "city": "Berlin",
+                  "address": "Musterstraße 42, 10115 Berlin, Germany",
+                  "photo": "https://lancio-carriera.s3.amazon.com/profile-photo/0299292828828828",
+                  "bio": "Your Bio",
+                  "businessDoc": [
+                    "https://lancio-carriera.s3.amazon.com/business-doc/0299292828828828.jpeg",
+                    "https://lancio-carriera.s3.amazon.com/business-doc/0299292828828820.jpeg"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/companies/edit-notification-settings": {
+      "put": {
+        "tags": ["Company"],
+        "summary": "Edit notification settings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "onMessageReceived": false,
+                  "onApplicantApplied": true,
+                  "onJobReported": false,
+                  "onJobPosted": true
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/companies/mark-notification": {
+      "put": {
+        "tags": ["Company"],
+        "summary": "Mark a notification as READ",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "notificationId": "64ca83d5c9784f45d0dca198"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/companies/mark-all-notifications": {
+      "put": {
+        "tags": ["Company"],
+        "summary": "Mark all notifications as READ",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/companies/report": {
+      "post": {
+        "tags": ["Company"],
+        "summary": "Report a Company",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "companyId": "64c7883d7a116886bbe5bda8"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
     "/file-uploads/request-upload-url": {
       "get": {
         "tags": ["File Uploads"],
@@ -443,7 +1119,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "possible values include: profile-photo, resume, business-doc",
+            "description": "possible values include: profile-photo, resume, business-doc, chat",
             "example": "profile-photo"
           },
           {
@@ -466,7 +1142,7 @@
         }
       }
     },
-    "/test/profile-photo/439444875247155986489417163849.jpeg": {
+    "/test/chat/255313999972341859291846357166.webm": {
       "put": {
         "tags": ["File Uploads"],
         "summary": "Upload file to signed url",
@@ -490,7 +1166,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "AKIAZIFTYRZJNBP2VGM4"
+            "example": "AKIAYBSBUG4DNSW24A4X"
           },
           {
             "name": "Content-Type",
@@ -498,7 +1174,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "image%2Fjpeg"
+            "example": "video%2Fwebm"
           },
           {
             "name": "Expires",
@@ -506,7 +1182,7 @@
             "schema": {
               "type": "integer"
             },
-            "example": "1685823544"
+            "example": "1688267278"
           },
           {
             "name": "Signature",
@@ -514,7 +1190,267 @@
             "schema": {
               "type": "string"
             },
-            "example": "ARxixoVjrW8QPely9c8I3KqsAek%3D"
+            "example": "dSlSNEBfBz%2BmgLFbXtI0orXmIzA%3D"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs/64ca83d4c9784f45d0dca193": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "Get a Job",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "Get Jobs",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "null"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "5"
+          },
+          {
+            "name": "company",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "64c7883d7a116886bbe5bda8"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Jobs"],
+        "summary": "Post a Job",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "position": "Mid-Level Project Manager",
+                  "type": "Vertrag",
+                  "about": "Some description here",
+                  "salary": "1000 - 1500",
+                  "requirements": [
+                    "High school diploma",
+                    "Farmiliarity with sales",
+                    "Willingness to learn"
+                  ],
+                  "responsibilities": [
+                    "Reach out to customers",
+                    "Gather customer feedbacks"
+                  ],
+                  "isRemote": true,
+                  "isHiringUrgently": true,
+                  "allowMultipleCandidate": false
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Jobs"],
+        "summary": "Edit a Job",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "jobId": "64ca83d4c9784f45d0dca193",
+                  "position": "Senior Research Assistant",
+                  "type": "Vertrag",
+                  "about": "Some description here",
+                  "salary": "1000 - 1500",
+                  "requirements": [
+                    "High school diploma",
+                    "Farmiliarity with sales",
+                    "Willingness to learn"
+                  ],
+                  "responsibilities": [
+                    "Reach out to customers",
+                    "Gather customer feedbacks"
+                  ],
+                  "isHiringUrgently": true,
+                  "allowMultipleCandidate": false,
+                  "isClosed": true,
+                  "isRemote": true
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs/by-a-company/64c7883d7a116886bbe5bda8": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "Get Jobs posted by a certain company",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs/company/new-applicants": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "Get New Applicants List for a company",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTI1YjlhY2MzZDNjN2NkZTM5YmIzNiIsImVtYWlsIjoiYWRhZ2lyaTE0MTdAZ21haWwuY29tIiwiaWF0IjoxNjg4MDU4MzA4LCJleHAiOjE2OTA2NTAzMDh9.vVhAoGmv_VkkiPP9ttOuYRRBGcigKqJd0r90rpoKbuY"
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "null"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "2"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs/company/new-applicants-count": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "Get New Applicants Count",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTI1YjlhY2MzZDNjN2NkZTM5YmIzNiIsImVtYWlsIjoiYWRhZ2lyaTE0MTdAZ21haWwuY29tIiwiaWF0IjoxNjg4MDU4MzA4LCJleHAiOjE2OTA2NTAzMDh9.vVhAoGmv_VkkiPP9ttOuYRRBGcigKqJd0r90rpoKbuY"
           }
         ],
         "responses": {
@@ -538,7 +1474,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0N2E3OTczY2Y2ODU5ZWEzZjNhZDQ4MiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2ODU3NTMwNTgsImV4cCI6MTY4ODM0NTA1OH0.qgoo0ioMZKqyNwCY9s5Aql6xv9FwHnpwp5liNKamNV0"
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
           },
           {
             "name": "cursor",
@@ -554,7 +1490,15 @@
             "schema": {
               "type": "integer"
             },
-            "example": "3"
+            "example": "2"
+          },
+          {
+            "name": "isClosed",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "example": "false"
           }
         ],
         "responses": {
@@ -567,31 +1511,66 @@
         }
       }
     },
-    "/jobs": {
-      "post": {
+    "/jobs/user": {
+      "get": {
         "tags": ["Jobs"],
-        "summary": "Post a Job",
+        "summary": "Get Jobs that a user applied to",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "null"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "2"
+          },
+          {
+            "name": "duration",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Accepted Values are: 'thisWeek', 'thisMonth', 'today'. Ommiting this field from the query results in all matches where the logged-in user is an applicant; been returned.",
+            "example": "thisMonth"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs/apply": {
+      "put": {
+        "tags": ["Jobs"],
+        "summary": "Apply to Job",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "example": {
-                  "position": "Senior Research Assistant",
-                  "type": "Vertrag",
-                  "about": "Some description here",
-                  "salary": "1000 - 1500",
-                  "requirements": [
-                    "High school diploma",
-                    "Farmiliarity with sales",
-                    "Willingness to learn"
-                  ],
-                  "responsibilities": [
-                    "Reach out to customers",
-                    "Gather customer feedbacks"
-                  ],
-                  "isHiringUrgently": true,
-                  "allowMultipleCandidate": false
+                  "jobId": "64ca83d4c9784f45d0dca193"
                 }
               }
             }
@@ -604,7 +1583,321 @@
             "schema": {
               "type": "string"
             },
-            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0N2JiZjQ5M2NlZGQzODAyZTc5OGY0ZCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3QGdtYWlsLmNvbSIsImlhdCI6MTY4NTgzMTUwMCwiZXhwIjoxNjg4NDIzNTAwfQ.46jrDbW5_70dQbdjVnKTh_FXQQH955nvQ-BECbe3r3U"
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs/report": {
+      "put": {
+        "tags": ["Jobs"],
+        "summary": "Report a Job",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "jobId": "64c8ca967a116886bbe5be3d"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs/accept-applicant": {
+      "put": {
+        "tags": ["Jobs"],
+        "summary": "Accept an Applicant",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "jobId": "64ca83d4c9784f45d0dca193",
+                  "applicantId": "64c787c87a116886bbe5bd9b"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs/close-job": {
+      "put": {
+        "tags": ["Jobs"],
+        "summary": "Close a Job",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "jobId": "64ca83d4c9784f45d0dca193"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs/save": {
+      "post": {
+        "tags": ["Jobs"],
+        "summary": "Save a Job",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "jobId": "64ca83d4c9784f45d0dca193"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/jobs/unsave": {
+      "post": {
+        "tags": ["Jobs"],
+        "summary": "Unsave a Job",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "jobId": "64ca83d4c9784f45d0dca193"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/chats": {
+      "get": {
+        "tags": ["Chats"],
+        "summary": "Get Chats",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTI1YjlhY2MzZDNjN2NkZTM5YmIzNiIsImVtYWlsIjoiYWRhZ2lyaTE0MTdAZ21haWwuY29tIiwiaWF0IjoxNjg3MzU0ODUzLCJleHAiOjE2ODk5NDY4NTN9.GLMQfhMBJjvptK0vIR-HRfnWIrUvcTv3ymIJxrwEj3g"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/chats/64930c6027de16d11a8a5690": {
+      "get": {
+        "tags": ["Chats"],
+        "summary": "Get Chat",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTI1YjlhY2MzZDNjN2NkZTM5YmIzNiIsImVtYWlsIjoiYWRhZ2lyaTE0MTdAZ21haWwuY29tIiwiaWF0IjoxNjg3MzU4MDk2LCJleHAiOjE2ODk5NTAwOTZ9.k7cUIobnVnPkrNOu3rtacV_YuCZJ78z_RhTSnmPrfr4"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Chats"],
+        "summary": "Post a Chat",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "companyId": "64925b9acc3d3c7cde39bb36",
+                  "userId": "64930c6027de16d11a8a5690",
+                  "message": {
+                    "type": "file",
+                    "text": "",
+                    "file": {
+                      "type": "image",
+                      "src": "https://lancio-carriera.s3.amazon.com/profile-photo/0299292828828828",
+                      "contentType": "image/jpeg",
+                      "name": "high_school_records"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTI1YjlhY2MzZDNjN2NkZTM5YmIzNiIsImVtYWlsIjoiYWRhZ2lyaTE0MTdAZ21haWwuY29tIiwiaWF0IjoxNjg3MzU4MDk2LCJleHAiOjE2ODk5NTAwOTZ9.k7cUIobnVnPkrNOu3rtacV_YuCZJ78z_RhTSnmPrfr4"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/chats/cu": {
+      "get": {
+        "tags": ["Chats"],
+        "summary": "Get Chat by Comapany and User Id",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTI1YjlhY2MzZDNjN2NkZTM5YmIzNiIsImVtYWlsIjoiYWRhZ2lyaTE0MTdAZ21haWwuY29tIiwiaWF0IjoxNjg3MzU4MDk2LCJleHAiOjE2ODk5NTAwOTZ9.k7cUIobnVnPkrNOu3rtacV_YuCZJ78z_RhTSnmPrfr4"
+          },
+          {
+            "name": "companyId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "64925b9acc3d3c7cde39bb36"
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "649266bb544237a5f1801f2a"
           }
         ],
         "responses": {
