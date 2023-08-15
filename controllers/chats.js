@@ -3,15 +3,18 @@ const asyncHandler = require('../middlewares/async');
 const ErrorResponse = require('../utils/errorResponse');
 const Chat = require('../models/Chat');
 const { generateRandomNumbers } = require('../utils/general');
-const Company = require('../models/Company');
-const User = require('../models/User');
+
 
 module.exports.getChats = asyncHandler(async (req, res, next) => {
   const query = req.query;
   const user = req.user;
   const accountType = user.accountType;
 
-  const searchQuery = { lastMessage: { $ne: undefined } };
+  // Define search query to filter chats
+  const searchQuery = {
+    lastMessage: { $ne: undefined }, // Chats must have an existing last message
+  };
+
   if (accountType === 'company') {
     searchQuery.company = user.id;
   }
@@ -46,6 +49,43 @@ module.exports.getChats = asyncHandler(async (req, res, next) => {
     delete chat.userUnreadMessages;
     return chat;
   });
+
+  // Filter the chats based on the hasBeenRead field
+  const hasBeenRead = query.hasBeenRead;
+
+  // Check if hasBeenRead is a valid boolean
+  if (typeof hasBeenRead === 'boolean') {
+    // If hasBeenRead is true, filter chats that have been read (unreadMessageCount <= 0)
+    if (hasBeenRead) {
+      data = data.filter((chat) => chat.unreadMessageCount <= 0);
+    }
+
+    // If hasBeenRead is false, filter chats that are unread (unreadMessageCount > 0)
+    if (!hasBeenRead) {
+      data = data.filter((chat) => chat.unreadMessageCount > 0);
+    }
+  }
+
+  // Filter the chats based on the search term
+  const searchTerm = query.searchTerm || '';
+
+  // Check if a search term is provided
+  if (searchTerm) {
+    // Filter chats based on account type and search term
+    data = data.filter((chat) => {
+      if (accountType === 'personal') {
+        // If account type is personal, check if company name starts with the search term
+        return chat.company.company_name
+          .toLowerCase()
+          .startsWith(searchTerm.toLowerCase());
+      } else {
+        // If account type is not personal, check if user's first name starts with the search term
+        return chat.user.first_name
+          .toLowerCase()
+          .startsWith(searchTerm.toLowerCase());
+      }
+    });
+  }
 
   return res.json({
     chats: data,

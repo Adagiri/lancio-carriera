@@ -16,7 +16,7 @@ const Job = require('../models/Job');
 const UserNotification = require('../models/UserNotification');
 const { deleteS3File } = require('../services/AwsService');
 const { sendPersonalizedEmailToUser } = require('../utils/messages');
-const { hasUserAppliedToJob } = require('../utils/general');
+const { hasUserAppliedToJob, getTimeFrame } = require('../utils/general');
 
 const cleanupStorage = async (args, userBeforeEditing) => {
   const resumeBeforeEditing = userBeforeEditing.resume;
@@ -98,7 +98,7 @@ function getHourlyProfileCount(date, views) {
   ).length;
 }
 
-const getJobsAppliedCount = async (userId, targetTime) => {
+const getJobListingsAppliedCount = async (userId, targetTime) => {
   let data = await Job.countDocuments({
     'applicants.createdAt': { $gt: targetTime },
     'applicants.profile': userId,
@@ -420,7 +420,10 @@ module.exports.getLoggedInUserDashboardData = asyncHandler(
         ? startOfDay(today)
         : new Date('2023-01-01');
 
-    const jobsAppliedCount = await getJobsAppliedCount(userId, targetTime);
+    const jobsAppliedCount = await getJobListingsAppliedCount(
+      userId,
+      targetTime
+    );
     const profileViewDetails = await getProfileViewsDetail(userId, targetTime);
     const profileViewGraphData = await getProfileViewsGraphData({
       userId,
@@ -492,24 +495,38 @@ module.exports.editNotificationSettingsForUser = asyncHandler(
 
 module.exports.getNotificationsForUser = asyncHandler(
   async (req, res, next) => {
+    // Initialize cursor value as a default
     let cursor = '000000000000000000000000';
+
+    // Check if a cursor is provided in the query parameter
     if (req.query.cursor !== 'null') {
       cursor = req.query.cursor;
     }
 
+    // Determine the limit for the number of notifications to retrieve
     const limit = Math.abs(Number(req.query.limit)) || 10;
 
+    // Define the base query to filter notifications by owner
     const query = { owner: req.user.id };
 
+    // Handle case query parameter and set timeFrame
+    if (req.query.case) {
+      query.case = req.query.case.replace('_', ' ');
+    }
+    const timeFrame = query.timeFrame || 'none';
+    query.createdAt = getTimeFrame(timeFrame);
+
+    // Find the document corresponding to the cursor, if available
     const cursorDocument = await UserNotification.findById(cursor).select(
       'createdAt'
     );
 
+    // Update the query to filter notifications based on the cursor's createdAt
     if (cursorDocument) {
       query.createdAt = { $lte: cursorDocument.createdAt };
     }
 
-    console.log(cursorDocument);
+    // Fetch notifications based on the modified query
     const notifications = await UserNotification.find(query)
       .populate({
         path: 'company',
@@ -518,17 +535,20 @@ module.exports.getNotificationsForUser = asyncHandler(
       .sort({ createdAt: -1 })
       .limit(limit + 1);
 
+    // Determine whether there is a next page of notifications
     const hasNextPage = notifications.length > limit;
-    let nextPageCursor = null;
 
+    // Calculate the cursor for the next page, if applicable
+    let nextPageCursor = null;
     if (hasNextPage) {
       nextPageCursor = notifications.pop()._id;
     }
 
+    // Respond with the JSON data including pagination details
     return res.json({
       hasNextPage,
       nextPageCursor,
-      notifications: notifications,
+      notifications,
       count: notifications.length,
     });
   }

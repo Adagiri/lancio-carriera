@@ -7,7 +7,11 @@ const Company = require('../models/Company');
 const CompanyNotification = require('../models/CompanyNotification');
 const User = require('../models/User');
 const UserNotification = require('../models/UserNotification');
-const { hasUserAppliedToJob, isJobSavedByUser } = require('../utils/general');
+const {
+  hasUserAppliedToJob,
+  isJobSavedByUser,
+  getTimeFrame,
+} = require('../utils/general');
 
 const isAnApplicant = (applicantsIds, userId) => {
   return applicantsIds.map((id) => id.toString()).indexOf(userId) === -1
@@ -217,14 +221,27 @@ const sendNotificationOnApplicantAccepted = async ({ job, applicant }) => {
   }
 };
 
-module.exports.getJobs = asyncHandler(async (req, res, next) => {
+module.exports.getJobListings = asyncHandler(async (req, res, next) => {
   const query = req.query;
 
   const cursor = query.cursor;
   const limit = Math.abs(Number(query.limit)) || 10;
 
-  delete query.cursor;
-  delete query.limit;
+  const filter = { ...query };
+
+  const type = query.type || '';
+  const timeFrame = query.timeFrame || 'none';
+  const searchTerm = query.searchTerm || '';
+  const regex = new RegExp(searchTerm, 'i');
+
+  filter.createdAt = getTimeFrame(timeFrame);
+  filter.position = { $regex: regex };
+  filter.type = type;
+
+  delete filter.limit;
+  delete filter.cursor;
+  delete filter.timeFrame;
+  delete filter.searchTerm;
 
   let data = await Job.find({ ...query })
     .sort({ _id: -1 })
@@ -313,16 +330,30 @@ module.exports.getJobById = asyncHandler(async (req, res, next) => {
   });
 });
 
-module.exports.getCompanyJobs = asyncHandler(async (req, res, next) => {
+module.exports.getJobPostings = asyncHandler(async (req, res, next) => {
   const query = req.query;
-  console.log(query);
   const cursor = query.cursor;
   const limit = Math.abs(Number(query.limit)) || 10;
 
   const filter = { ...query };
+
+  const minApplicantCount = Math.abs(Number(query.minApplicantCount)) || 0;
+  const maxApplicantCount = Math.abs(Number(query.maxApplicantCount)) || 10000;
+  const timeFrame = query.timeFrame || 'none';
+  const searchTerm = query.searchTerm || '';
+  const regex = new RegExp(searchTerm, 'i');
+
+  filter.applicantsCount = { $gte: minApplicantCount, $lte: maxApplicantCount };
+  filter.createdAt = getTimeFrame(timeFrame);
+  filter.position = { $regex: regex };
+
   delete filter.limit;
   delete filter.cursor;
-  console.log(req.user.id, 'req.user.id');
+  delete filter.timeFrame;
+  delete filter.minApplicantCount;
+  delete filter.maxApplicantCount;
+  delete filter.searchTerm;
+
   let data = await Job.find({
     company: req.user.id,
     ...filter,
@@ -361,26 +392,35 @@ module.exports.getNewApplicantsList = asyncHandler(async (req, res, next) => {
   const currentTime = new Date(req.user.lastTimeNewApplicantsWasViewed);
 
   let data = await Job.aggregate([
-    { $unwind: '$applicants' },
     {
       $match: {
-        'applicants.createdAt': { $gt: currentTime },
         company: mongoose.Types.ObjectId(userId),
       },
     },
     {
+      $unwind: '$applicants',
+    },
+    {
+      $match: {
+        'applicants.createdAt': { $gt: currentTime },
+      },
+    },
+    {
       $lookup: {
-        from: 'users', // Assuming the collection name for the User model is 'users'
+        from: 'users',
         localField: 'applicants.profile',
         foreignField: '_id',
         as: 'applicants.profile',
       },
     },
     {
+      $unwind: '$applicants.profile',
+    },
+    {
       $project: {
         _id: 0,
         jobId: '$_id',
-        profile: { $arrayElemAt: ['$applicants.profile', 0] },
+        profile: '$applicants.profile',
         coverLetter: '$applicants.coverLetter',
         resume: '$applicants.resume',
         createdAt: '$applicants.createdAt',
@@ -789,30 +829,32 @@ module.exports.closeAJob = asyncHandler(async (req, res, next) => {
   return res.status(200).json({ success: true, job: job });
 });
 
-module.exports.getJobsPostedByCompany = asyncHandler(async (req, res, next) => {
-  let data = await Job.find({
-    company: req.params.companyId,
-  })
-    .populate('company')
-    .populate({
-      path: 'applicants.profile',
-      select: 'first_name last_name photo age state country city',
-    });
+module.exports.getJobListingsPostedByCompany = asyncHandler(
+  async (req, res, next) => {
+    let data = await Job.find({
+      company: req.params.companyId,
+    })
+      .populate('company')
+      .populate({
+        path: 'applicants.profile',
+        select: 'first_name last_name photo age state country city',
+      });
 
-  if (req.user.accountType === 'personal') {
-    const userId = req.user.id;
-    const userData = await User.findById(userId).select('savedJobs');
+    if (req.user.accountType === 'personal') {
+      const userId = req.user.id;
+      const userData = await User.findById(userId).select('savedJobs');
 
-    data = data.map((job) => {
-      job = job.toObject();
-      job.hasUserApplied = hasUserAppliedToJob(userId, job);
-      job.isJobSaved = isJobSavedByUser(job._id, userData.savedJobs);
+      data = data.map((job) => {
+        job = job.toObject();
+        job.hasUserApplied = hasUserAppliedToJob(userId, job);
+        job.isJobSaved = isJobSavedByUser(job._id, userData.savedJobs);
 
-      return job;
+        return job;
+      });
+    }
+
+    return res.json({
+      jobs: data,
     });
   }
-
-  return res.json({
-    jobs: data,
-  });
-});
+);

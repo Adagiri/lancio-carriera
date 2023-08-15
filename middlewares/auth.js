@@ -83,7 +83,7 @@ module.exports.protectCompany = asyncHandler(async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     req.user = await Company.findById(decoded.id).select(
-      'company_name email registeredWith accountType'
+      'company_name email registeredWith accountType lastTimeNewApplicantsWasViewed'
     );
     if (!req.user) {
       return next(

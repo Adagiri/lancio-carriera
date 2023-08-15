@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
 const { sendEmail, generateEmailArguments } = require('./aws');
+const { startOfDay, startOfWeek, startOfMonth } = require('date-fns');
 
 module.exports.generateRandomNumbers = (length) => {
   let code = '';
@@ -110,4 +111,18 @@ module.exports.hasUserAppliedToJob = (userId, job) => {
 
 module.exports.isJobSavedByUser = (jobId, savedJobs) => {
   return savedJobs.findIndex((id) => id.toString() === jobId.toString()) !== -1;
+};
+
+module.exports.getTimeFrame = (timeFrame) => {
+  const today = new Date();
+
+  if (timeFrame === 'today') {
+    return { $gte: startOfDay(today) };
+  } else if (timeFrame === 'this-week') {
+    return { $gte: startOfWeek(today) };
+  } else if (timeFrame === 'this-month') {
+    return { $gte: startOfMonth(today) };
+  } else {
+    return {$gte: new Date('2023-01-01')}
+  }
 };

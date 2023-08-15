@@ -1,10 +1,10 @@
 const express = require('express');
 
 const {
-  getCompanyJobs,
+  getJobPostings,
   postJob,
   editJob,
-  getJobs,
+  getJobListings,
   getJobById,
   applyToJob,
   acceptApplicant,
@@ -14,14 +14,14 @@ const {
   reportJob,
   unsaveAJob,
   saveAJob,
-  getJobsPostedByCompany,
+  getJobListingsPostedByCompany,
   closeAJob,
 } = require('../controllers/jobs');
 const { protectCompany, protectUser, protect } = require('../middlewares/auth');
 const router = express.Router();
 
-router.get('/company', protectCompany, getCompanyJobs);
-router.get('/company/jobs', protectCompany, getCompanyJobs);
+router.get('/company', protectCompany, getJobPostings);
+router.get('/company/jobs', protectCompany, getJobPostings);
 router.get('/company/new-applicants', protectCompany, getNewApplicantsList);
 router.get(
   '/company/new-applicants-count',
@@ -29,9 +29,9 @@ router.get(
   getNewApplicantsCount
 );
 
-router.get('/', protect, getJobs);
+router.get('/', protect, getJobListings);
 router.get('/user', protectUser, getUserJobs);
-router.get('/by-a-company/:companyId', protect, getJobsPostedByCompany);
+router.get('/by-a-company/:companyId', protect, getJobListingsPostedByCompany);
 router.get('/:id', protect, getJobById);
 
 router.post('/', protectCompany, postJob);

@@ -1,6 +1,3 @@
-**User EndPoints**
-
-
 # TODO
 checkout 'getProfileViewsDetail' function in the user controller
 handle deletion of unused resume & photos when updating user profile, and unused business doc & photo whilst updating company

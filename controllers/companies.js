@@ -12,6 +12,7 @@ const Company = require('../models/Company');
 const Job = require('../models/Job');
 const CompanyNotification = require('../models/CompanyNotification');
 const ErrorResponse = require('../utils/errorResponse');
+const { getTimeFrame } = require('../utils/general');
 
 const getTotalApplicationsCount = async (userId, currentTime) => {
   const result = await Job.aggregate([
@@ -423,23 +424,38 @@ module.exports.editNotificationSettingsForCompany = asyncHandler(
 
 module.exports.getNotificationsForCompany = asyncHandler(
   async (req, res, next) => {
+    // Initialize cursor value as a default
     let cursor = '000000000000000000000000';
+
+    // Check if a cursor is provided in the query parameter
     if (req.query.cursor !== 'null') {
       cursor = req.query.cursor;
     }
 
+    // Determine the limit for the number of notifications to retrieve
     const limit = Math.abs(Number(req.query.limit)) || 10;
 
+    // Define the base query to filter notifications by owner
     const query = { owner: req.user.id };
 
+    // Handle case query parameter and set timeFrame
+    if (req.query.case) {
+      query.case = req.query.case.replace('_', ' ');
+    }
+    const timeFrame = query.timeFrame || 'none';
+    query.createdAt = getTimeFrame(timeFrame);
+
+    // Find the document corresponding to the cursor, if available
     const cursorDocument = await CompanyNotification.findById(cursor).select(
       'createdAt'
     );
 
+    // Update the query to filter notifications based on the cursor's createdAt
     if (cursorDocument) {
       query.createdAt = { $lte: cursorDocument.createdAt };
     }
 
+    // Fetch notifications based on the modified query
     const notifications = await CompanyNotification.find(query)
       .populate({
         path: 'user',
@@ -448,17 +464,20 @@ module.exports.getNotificationsForCompany = asyncHandler(
       .sort({ createdAt: -1 })
       .limit(limit + 1);
 
+    // Determine whether there is a next page of notifications
     const hasNextPage = notifications.length > limit;
-    let nextPageCursor = null;
 
+    // Calculate the cursor for the next page, if applicable
+    let nextPageCursor = null;
     if (hasNextPage) {
       nextPageCursor = notifications.pop()._id;
     }
 
+    // Respond with the JSON data including pagination details
     return res.json({
       hasNextPage,
       nextPageCursor,
-      notifications: notifications,
+      notifications,
       count: notifications.length,
     });
   }
