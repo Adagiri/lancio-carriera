@@ -230,6 +230,7 @@ module.exports.getJobListings = asyncHandler(async (req, res, next) => {
   const filter = { ...query };
 
   const type = query.type || '';
+  const category = query.category || '';
   const timeFrame = query.timeFrame || 'none';
   const searchTerm = query.searchTerm || '';
   const regex = new RegExp(searchTerm, 'i');
@@ -237,6 +238,7 @@ module.exports.getJobListings = asyncHandler(async (req, res, next) => {
   filter.createdAt = getTimeFrame(timeFrame);
   filter.position = { $regex: regex };
   filter.type = type;
+  filter.category = category;
 
   delete filter.limit;
   delete filter.cursor;

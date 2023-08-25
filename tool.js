@@ -4,7 +4,7 @@ module.exports.getNewApplicantsList = asyncHandler(async (req, res, next) => {
   const cursor = query.cursor;
   const limit = Math.abs(Number(query.limit)) || 10;
 
-  const lastTimeProfileWasViewed = new Date(req.user.lastTimeNewApplicantsWasViewed);
+  const lastViewedTime = new Date(req.user.lastTimeNewApplicantsWasViewed);
 
   let data = await Job.aggregate([
     {
@@ -17,7 +17,7 @@ module.exports.getNewApplicantsList = asyncHandler(async (req, res, next) => {
     },
     {
       $match: {
-        'applicants.createdAt': { $gt: lastTimeProfileWasViewed },
+        'applicants.createdAt': { $gt: lastViewedTime },
       },
     },
     {
