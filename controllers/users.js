@@ -242,11 +242,11 @@ const getProfileViewsGraphData = async ({ userId, targetTime, duration }) => {
   );
 
   let data = {};
-  if (duration === 'thisWeek') {
+  if (duration === 'this-week') {
     data = getWeeklyGraphData(views);
   }
 
-  if (duration === 'thisMonth') {
+  if (duration === 'this-month') {
     data = getMonthlyGraphData(views);
   }
 
