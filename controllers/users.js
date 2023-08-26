@@ -110,14 +110,16 @@ const getJobListingsAppliedCount = async (userId, targetTime) => {
 const getProfileViewsDetail = async (userId, targetTime) => {
   let userProfileViews = await UserProfileView.findOne({
     user: userId,
-    'company.createdAt': { $gt: targetTime },
   });
 
-  // Sort is done earlier to make sure that after filtering duplicate values below, we have the most recent of each item on the list
-  const companyIds =
-    userProfileViews?.views
-      ?.sort((a, b) => b.createdAt - a.createdAt)
-      .map((view) => view.company) || [];
+  let views = userProfileViews?.views || [];
+
+  // Filter views that are greater than the target time
+  views = views.filter((view) => view.createdAt > targetTime);
+
+  const sortedViews = views.sort((a, b) => b.createdAt - a.createdAt);
+
+  const companyIds = sortedViews.map((view) => view.company) || [];
 
   let data = companyIds.filter((id, index) => companyIds.indexOf(id) === index);
   const viewCount = data.length;
@@ -227,10 +229,12 @@ function getDailyGraphData(views) {
 const getProfileViewsGraphData = async ({ userId, targetTime, duration }) => {
   let userProfileViews = await UserProfileView.findOne({
     user: userId,
-    'company.createdAt': { $gt: targetTime },
   });
 
   let views = userProfileViews?.views || [];
+
+  // Filter views that are greater than the target time
+  views = views.filter((view) => view.createdAt > targetTime);
 
   views = views.filter(
     (view, index) =>
