@@ -510,9 +510,9 @@ module.exports.getUserJobs = asyncHandler(async (req, res, next) => {
   const today = new Date();
   const duration = query.duration;
   const targetTime =
-    duration === 'thisWeek'
+    duration === 'this-week'
       ? startOfWeek(today)
-      : duration === 'thisMonth'
+      : duration === 'this-month'
       ? startOfMonth(today)
       : duration === 'today'
       ? startOfDay(today)
