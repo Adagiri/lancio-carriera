@@ -181,11 +181,11 @@ const getApplicantsCountGraphData = async ({
   ]);
 
   let data = {};
-  if (duration === 'thisWeek') {
+  if (duration === 'this-week') {
     data = getWeeklyGraphData(applicants);
   }
 
-  if (duration === 'thisMonth') {
+  if (duration === 'this-month') {
     data = getMonthlyGraphData(applicants);
   }
 
@@ -342,9 +342,9 @@ module.exports.getLoggedInCompanyDashboardData = asyncHandler(
 
     const today = new Date();
     const targetTime =
-      duration === 'thisWeek'
+      duration === 'this-week'
         ? startOfWeek(today)
-        : duration === 'thisMonth'
+        : duration === 'this-month'
         ? startOfMonth(today)
         : duration === 'today'
         ? startOfDay(today)

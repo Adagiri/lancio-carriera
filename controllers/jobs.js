@@ -241,7 +241,6 @@ module.exports.getJobListings = asyncHandler(async (req, res, next) => {
   filter.category = Array.isArray(category) ? { $in: category } : category;
   filter.location = location;
 
-  console.log(filter)
   delete filter.limit;
   delete filter.cursor;
   delete filter.timeFrame;
