@@ -3,7 +3,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const { getS3SignedUrl } = require('../utils/fileUploads');
 const { generateRandomNumbers } = require('../utils/general');
 
-const purposes = ['profile-photo', 'resume', 'business-doc', 'chat'];
+const purposes = ['profile-photo', 'resume', 'business-doc', 'chat', 'job-post'];
 
 module.exports.requestFileUploadUrl = asyncHandler(async (req, res, next) => {
   const { purpose, contentType } = req.query;

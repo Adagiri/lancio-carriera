@@ -223,14 +223,13 @@ const sendNotificationOnApplicantAccepted = async ({ job, applicant }) => {
 
 module.exports.getJobListings = asyncHandler(async (req, res, next) => {
   const query = req.query;
-
   const cursor = query.cursor;
   const limit = Math.abs(Number(query.limit)) || 10;
 
   const filter = { ...query };
 
   const type = query.type || '';
-  const category = query.category || '';
+  const category = query.category || [];
   const location = query.location || '';
   const timeFrame = query.timeFrame || 'none';
   const searchTerm = query.searchTerm || '';
@@ -239,9 +238,10 @@ module.exports.getJobListings = asyncHandler(async (req, res, next) => {
   filter.createdAt = getTimeFrame(timeFrame);
   filter.position = { $regex: regex };
   filter.type = type;
-  filter.category = category;
+  filter.category = Array.isArray(category) ? { $in: category } : category;
   filter.location = location;
 
+  console.log(filter)
   delete filter.limit;
   delete filter.cursor;
   delete filter.timeFrame;
@@ -336,6 +336,7 @@ module.exports.getJobById = asyncHandler(async (req, res, next) => {
 
 module.exports.getJobPostings = asyncHandler(async (req, res, next) => {
   const query = req.query;
+
   const cursor = query.cursor;
   const limit = Math.abs(Number(query.limit)) || 10;
 
