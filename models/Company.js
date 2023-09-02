@@ -9,7 +9,6 @@ const CompanySchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true,
     lowercase: true, // Store emails in lowercase to ensure uniqueness
     validate: {
       validator: function (value) {

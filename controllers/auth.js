@@ -155,6 +155,9 @@ module.exports.registerWithGoogle = asyncHandler(async (req, res, next) => {
     await sendWelcomeEmailForCompany({ email: args.email });
     const authToken = getSignedJwtToken(company);
 
+    // Delete any other documents with the same email where the 'isAccountActivated' field is set to false
+    await Company.deleteMany({ email: args.email, isAccountActivated: false });
+
     return res.status(200).json({
       success: true,
       company: company,
@@ -164,6 +167,9 @@ module.exports.registerWithGoogle = asyncHandler(async (req, res, next) => {
     const user = await User.create(args);
     await sendWelcomeEmailForUser({ email: args.email, first_name });
     const authToken = getSignedJwtToken(user);
+
+    // Delete any other documents with the same email where the 'isAccountActivated' field is set to false
+    await User.deleteMany({ email: args.email, isAccountActivated: false });
 
     return res.status(200).json({
       success: true,
@@ -227,6 +233,9 @@ module.exports.verifyEmail = asyncHandler(async (req, res, next) => {
     await sendWelcomeEmailForCompany({ email });
     const authToken = getSignedJwtToken(user);
 
+    // Delete any other documents with the same email where the 'isAccountActivated' field is set to false
+    await Company.deleteMany({ email: email, isAccountActivated: false });
+
     res.status(200).json({
       success: true,
       authToken: authToken,
@@ -235,6 +244,9 @@ module.exports.verifyEmail = asyncHandler(async (req, res, next) => {
   } else {
     await sendWelcomeEmailForUser({ email, first_name });
     const authToken = getSignedJwtToken(user);
+
+    // Delete any other documents with the same email where the 'isAccountActivated' field is set to false
+    await User.deleteMany({ email: email, isAccountActivated: false });
 
     res.status(200).json({
       success: true,
