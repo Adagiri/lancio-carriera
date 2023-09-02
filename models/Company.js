@@ -5,16 +5,20 @@ const CompanySchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-
+  
   email: {
     type: String,
-    required: [true, 'Please add an email'],
-    lowercase: true,
-    trim: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'Please add a valid email',
-    ],
+    required: true,
+    unique: true,
+    lowercase: true, // Store emails in lowercase to ensure uniqueness
+    validate: {
+      validator: function (value) {
+        // Regular expression for basic email validation
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(value);
+      },
+      message: 'Invalid email format',
+    },
   },
 
   password: {
