@@ -1,5 +1,5 @@
 # TODO
-checkout 'getProfileViewsDetail' function in the user controller
+handle when updating profile, email cannot be updated
 handle deletion of unused resume & photos when updating user profile, and unused business doc & photo whilst updating company
 validations for all apis
 can't use old passwords

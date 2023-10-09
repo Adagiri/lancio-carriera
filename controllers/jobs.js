@@ -254,7 +254,8 @@ module.exports.getJobListings = asyncHandler(async (req, res, next) => {
     )
     .populate({
       path: 'applicants.profile',
-      select: 'first_name last_name photo age state country city',
+      select:
+        'first_name last_name photo age state country city softSkills bio',
     });
   // Sort the list
   data = data.sort((a, b) => b.createdAt - a.createdAt);
@@ -365,7 +366,8 @@ module.exports.getJobPostings = asyncHandler(async (req, res, next) => {
     .populate('company')
     .populate({
       path: 'applicants.profile',
-      select: 'first_name last_name photo age state country city',
+      select:
+        'first_name last_name photo age state country city softSkills bio',
     });
   // Sort the list
   data = data.sort((a, b) => b.createdAt - a.createdAt);
@@ -525,7 +527,8 @@ module.exports.getUserJobs = asyncHandler(async (req, res, next) => {
     .populate('company', 'company_name photo address state country city')
     .populate({
       path: 'applicants.profile',
-      select: 'first_name last_name photo age state country city',
+      select:
+        'first_name last_name photo age state country city softSkills bio',
     });
 
   const totalCount = data.length;
@@ -841,7 +844,8 @@ module.exports.getJobListingsPostedByCompany = asyncHandler(
       .populate('company')
       .populate({
         path: 'applicants.profile',
-        select: 'first_name last_name photo age state country city',
+        select:
+          'first_name last_name photo age state country city softSkills bio',
       });
 
     if (req.user.accountType === 'personal') {
