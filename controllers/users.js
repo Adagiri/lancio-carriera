@@ -326,7 +326,7 @@ module.exports.getLoggedInUser = asyncHandler(async (req, res, next) => {
       {
         path: 'applicants.profile',
         select:
-          'first_name last_name photo age state country city softSkills bio',
+          'first_name last_name photo age state country city softSkills bio email',
       },
     ],
   });
