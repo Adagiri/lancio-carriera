@@ -46,9 +46,6 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Set static folder
-// app.use(express.static(path.join(__dirname, 'public')));
-
 const httpServer = http.Server(app);
 const io = socketIO(httpServer);
 
