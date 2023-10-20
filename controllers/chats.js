@@ -51,19 +51,17 @@ module.exports.getChats = asyncHandler(async (req, res, next) => {
   });
 
   // Filter the chats based on the hasBeenRead field
-  const hasBeenRead = query.hasBeenRead;
-
+  const hasBeenRead = String(query.hasBeenRead);
+  console.log('hasBeenRead: ', hasBeenRead, typeof hasBeenRead);
   // Check if hasBeenRead is a valid boolean
-  if (typeof hasBeenRead === 'boolean') {
-    // If hasBeenRead is true, filter chats that have been read (unreadMessageCount <= 0)
-    if (hasBeenRead) {
-      data = data.filter((chat) => chat.unreadMessageCount <= 0);
-    }
+  // If hasBeenRead is true, filter chats that have been read (unreadMessageCount <= 0)
+  if (hasBeenRead === 'true') {
+    data = data.filter((chat) => chat.unreadMessageCount <= 0);
+  }
 
-    // If hasBeenRead is false, filter chats that are unread (unreadMessageCount > 0)
-    if (!hasBeenRead) {
-      data = data.filter((chat) => chat.unreadMessageCount > 0);
-    }
+  // If hasBeenRead is false, filter chats that are unread (unreadMessageCount > 0)
+  if (hasBeenRead === 'false') {
+    data = data.filter((chat) => chat.unreadMessageCount > 0);
   }
 
   // Filter the chats based on the search term
@@ -80,9 +78,12 @@ module.exports.getChats = asyncHandler(async (req, res, next) => {
           .includes(searchTerm.toLowerCase());
       } else {
         // If account type is not personal, check if user's first name starts with the search term
-        return chat.user.first_name
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
+        return (
+          chat.user.first_name
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          chat.user.last_name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
       }
     });
   }
