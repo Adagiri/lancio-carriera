@@ -33,7 +33,8 @@ module.exports.getChats = asyncHandler(async (req, res, next) => {
     })
     .populate({
       path: 'user',
-      select: 'first_name last_name photo accountType online age resume email softSkills city state country photo',
+      select:
+        'first_name last_name photo accountType online age resume email softSkills city state country photo',
     });
 
   data = data.map((chat) => {
@@ -76,12 +77,12 @@ module.exports.getChats = asyncHandler(async (req, res, next) => {
         // If account type is personal, check if company name starts with the search term
         return chat.company.company_name
           .toLowerCase()
-          .startsWith(searchTerm.toLowerCase());
+          .includes(searchTerm.toLowerCase());
       } else {
         // If account type is not personal, check if user's first name starts with the search term
         return chat.user.first_name
           .toLowerCase()
-          .startsWith(searchTerm.toLowerCase());
+          .includes(searchTerm.toLowerCase());
       }
     });
   }
@@ -102,7 +103,8 @@ module.exports.getChatById = asyncHandler(async (req, res, next) => {
     })
     .populate({
       path: 'user',
-      select: 'first_name last_name photo accountType online age resume email softSkills city state country photo',
+      select:
+        'first_name last_name photo accountType online age resume email softSkills city state country photo',
     });
 
   if (!chat) {
@@ -148,11 +150,13 @@ module.exports.getChatsByCompanyAndUserId = asyncHandler(
     chat = await Chat.findById(chat._id)
       .populate({
         path: 'company',
-        select: 'company_name photo accountType online city state country photo',
+        select:
+          'company_name photo accountType online city state country photo',
       })
       .populate({
         path: 'user',
-        select: 'first_name last_name photo accountType online age resume email softSkills city state country photo',
+        select:
+          'first_name last_name photo accountType online age resume email softSkills city state country photo',
       });
 
     return res.json({
