@@ -111,7 +111,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('joinChat', async ({ chatId, userId }) => {
-    console.log('A user joined chat');
     socket.join(chatId);
 
     const chat = await Chat.findById(chatId).select('company user');
@@ -136,26 +135,20 @@ io.on('connection', (socket) => {
   socket.on('startedTyping', ({ chatId, userId }) => {
     console.log(chatId, userId);
     io.to(chatId).emit('userStartedTyping', userId);
-    console.log('done');
-
-    // socket.to(chatId).emit('userStartedTyping', userId);
   });
 
   // Handle stop typing status
   socket.on('stoppedTyping', ({ chatId, userId }) => {
     io.to(chatId).emit('userStoppedTyping', userId);
-    // socket.to(chatId).emit('userStoppedTyping', userId);
   });
 
   // Handle message sending
   socket.on('messageSent', async ({ chatId, userId, message }) => {
     // Save message to the database
-    console.log(chatId, userId, message, 'chatId , userId, message');
+    // console.log(chatId, userId, message, 'chatId , userId, message');
     const newMessage = message;
     const room = io.sockets.adapter.rooms.get(chatId);
-    console.log(room, 'room');
     const numClients = room ? room.size : 0;
-    console.log(numClients);
 
     const chat = await Chat.findById(chatId)
       .populate({
@@ -184,7 +177,6 @@ io.on('connection', (socket) => {
       isUser && (chat.companyUnreadMessages = chat.companyUnreadMessages + 1);
     }
 
-    console.log(chat, 'chat detail from socket-io');
     await chat.save();
 
     await sendNotificationOnMessageReceived({
@@ -196,6 +188,18 @@ io.on('connection', (socket) => {
 
     // Emit the message to all connected clients in the chat room
     io.to(chatId).emit('newMessage', message);
+  });
+
+  // Handle chat reported
+  socket.on('chatReported', async ({ chatId, userId }) => {
+    // Change the status in the DB
+    await Chat.findByIdAndUpdate(chatId, {
+      isChatClosed: true,
+      reportedBy: userId,
+    });
+
+    // Emit the change to all connected clients in the chat room
+    io.to(chatId).emit('userReportedChat', userId);
   });
 });
 
