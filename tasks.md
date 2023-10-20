@@ -1,9 +1,9 @@
 # TODO
-handle when updating profile, email cannot be updated
-handle deletion of unused resume & photos when updating user profile, and unused business doc & photo whilst updating company
-validations for all apis
-can't use old passwords
-if mailersend, delete workmail
+add validations in some endpoints
+change Email sending setup
+swap AWS credentials
+prepare live credentials for database
+deploy api to production
 
 # Admin Dashboard
 login - email & password
@@ -33,3 +33,11 @@ users
  - create admins
  - get admins (add filters)
  - get admin
+
+https://www.instagram.com/lancio.carriera/
+
+
+# Immediate
+- report a chat api _done_
+- filters in job post (categories)
+- /chats (get) - add [age, resume, email, softSkills, ...]user & [city, state, country]company _done_

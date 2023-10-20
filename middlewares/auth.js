@@ -25,6 +25,8 @@ module.exports.protectUser = asyncHandler(async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+    console.log(decoded);
     req.user = await User.findById(decoded.id).select(
       'first_name last_name email registeredWith accountType'
     );

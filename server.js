@@ -27,6 +27,7 @@ const swaggerDocument = require('./swagger.json');
 const { connectDB } = require('./config/db');
 const UserNotification = require('./models/UserNotification');
 const CompanyNotification = require('./models/CompanyNotification');
+const { default: helmet } = require('helmet');
 
 dotenv.config({ path: './config/config.env' });
 
@@ -40,9 +41,15 @@ if (process.env.TEST_ENV) {
 
 app.use(cookieParser());
 
+app.use(
+  helmet({
+    contentSecurityPolicy: process.env.TEST_ENV === 'false' ? true : false,
+  })
+);
+
 app.use(express.json());
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.TEST_ENV === 'true') {
   app.use(morgan('dev'));
 }
 
@@ -211,9 +218,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 8000;
 
 const server = httpServer.listen(PORT, () => {
-  console.log(
-    `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
-  );
+  console.log(`Server running in on port ${PORT}`.yellow.bold);
 });
 
 process.on('unhandledRejection', (err, promise) => {

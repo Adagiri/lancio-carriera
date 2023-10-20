@@ -250,7 +250,7 @@ module.exports.getJobListings = asyncHandler(async (req, res, next) => {
     .sort({ _id: -1 })
     .populate(
       'company',
-      'company_name photo address state country city state country city'
+      'company_name photo address state country city email'
     )
     .populate({
       path: 'applicants.profile',
@@ -294,7 +294,7 @@ module.exports.getJobById = asyncHandler(async (req, res, next) => {
   const jobId = req.params.id;
 
   let job = await Job.findById(jobId)
-    .populate('company', 'company_name photo address state country city')
+    .populate('company', 'company_name photo address state country city email')
     .populate({
       path: 'applicants.profile',
       select: 'first_name last_name age photo country state city',
@@ -525,7 +525,7 @@ module.exports.getUserJobs = asyncHandler(async (req, res, next) => {
     'applicants.createdAt': { $gt: targetTime },
     'applicants.profile': userId,
   })
-    .populate('company', 'company_name photo address state country city')
+    .populate('company', 'company_name photo address state country city email')
     .populate({
       path: 'applicants.profile',
       select:

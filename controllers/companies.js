@@ -13,6 +13,40 @@ const Job = require('../models/Job');
 const CompanyNotification = require('../models/CompanyNotification');
 const ErrorResponse = require('../utils/errorResponse');
 const { getTimeFrame } = require('../utils/general');
+const { deleteS3Objects } = require('../utils/aws');
+
+const cleanupStorage = async (args, companyBeforeEditing) => {
+  const businessDocBeforeEditing = companyBeforeEditing.businessDoc || [];
+
+  const keys = [];
+  const filePrefix = process.env.SAVED_FILES_PREFIX;
+
+  if (args.businessDoc) {
+    for (businessDoc of businessDocBeforeEditing) {
+      if (args.businessDoc.indexOf(businessDoc) === -1) {
+        if (businessDoc.startsWith(filePrefix)) {
+          const key = businessDoc.substring(filePrefix.length);
+          keys.push(key);
+        }
+      }
+    }
+  }
+
+  const photoBeforeEditing = companyBeforeEditing.photo;
+  if (args.photo) {
+    if (args.photo !== photoBeforeEditing) {
+      if (photoBeforeEditing.startsWith(filePrefix)) {
+        const key = photoBeforeEditing.substring(filePrefix.length);
+        keys.push(key);
+      }
+    }
+  }
+
+  if (keys.length > 0) {
+    await deleteS3Objects(keys);
+  }
+};
+
 
 const getTotalApplicationsCount = async (userId, currentTime) => {
   const result = await Job.aggregate([
@@ -390,11 +424,12 @@ module.exports.updateProfile = asyncHandler(async (req, res, next) => {
   const companyBeforeEditing = await Company.findById(req.user.id).select(
     'photo businessDoc'
   );
+
   const company = await Company.findByIdAndUpdate(req.user.id, args, {
     new: true,
   });
 
-  // await cleanupStorage(args, companyBeforeEditing);
+  await cleanupStorage(args, companyBeforeEditing);
 
   return res.status(200).json({
     success: true,

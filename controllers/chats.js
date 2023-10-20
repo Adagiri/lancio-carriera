@@ -4,7 +4,6 @@ const ErrorResponse = require('../utils/errorResponse');
 const Chat = require('../models/Chat');
 const { generateRandomNumbers } = require('../utils/general');
 
-
 module.exports.getChats = asyncHandler(async (req, res, next) => {
   const query = req.query;
   const user = req.user;
@@ -30,11 +29,11 @@ module.exports.getChats = asyncHandler(async (req, res, next) => {
     .select('-messages')
     .populate({
       path: 'company',
-      select: 'company_name photo accountType online',
+      select: 'company_name photo accountType online city state country photo',
     })
     .populate({
       path: 'user',
-      select: 'first_name last_name photo accountType online',
+      select: 'first_name last_name photo accountType online age resume email softSkills city state country photo',
     });
 
   data = data.map((chat) => {
@@ -99,11 +98,11 @@ module.exports.getChatById = asyncHandler(async (req, res, next) => {
   let chat = await Chat.findById(chatId)
     .populate({
       path: 'company',
-      select: 'company_name photo accountType online',
+      select: 'company_name photo accountType online city state country photo',
     })
     .populate({
       path: 'user',
-      select: 'first_name last_name photo accountType online',
+      select: 'first_name last_name photo accountType online age resume email softSkills city state country photo',
     });
 
   if (!chat) {
@@ -149,11 +148,11 @@ module.exports.getChatsByCompanyAndUserId = asyncHandler(
     chat = await Chat.findById(chat._id)
       .populate({
         path: 'company',
-        select: 'company_name photo accountType online',
+        select: 'company_name photo accountType online city state country photo',
       })
       .populate({
         path: 'user',
-        select: 'first_name last_name photo accountType online',
+        select: 'first_name last_name photo accountType online age resume email softSkills city state country photo',
       });
 
     return res.json({
@@ -179,4 +178,14 @@ module.exports.postChat = asyncHandler(async (req, res, next) => {
   let chat = await Chat.create(args);
 
   return res.status(201).json({ success: true, chat: chat });
+});
+
+module.exports.reportChat = asyncHandler(async (req, res, next) => {
+  const args = req.body;
+
+  args.reportedBy = req.user.id;
+  args.isChatClosed = true;
+  let chat = await Chat.findByIdAndUpdate(args.chatId, args, { new: true });
+
+  return res.status(200).json({ success: true, chat: chat });
 });

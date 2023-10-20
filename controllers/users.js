@@ -14,33 +14,39 @@ const {
 const Company = require('../models/Company');
 const Job = require('../models/Job');
 const UserNotification = require('../models/UserNotification');
-const { deleteS3File } = require('../services/AwsService');
 const { sendPersonalizedEmailToUser } = require('../utils/messages');
 const { hasUserAppliedToJob, getTimeFrame } = require('../utils/general');
+const { deleteS3Objects } = require('../utils/aws');
 
 const cleanupStorage = async (args, userBeforeEditing) => {
-  const resumeBeforeEditing = userBeforeEditing.resume;
-  // if (args.resume !== resumeBeforeEditing) {
-  //   const bucket = process.env.AWS_FILEUPLOAD_BUCKET;
-  //   const filePrefix = process.env.SAVED_FILES_PREFIX;
+  const resumeBeforeEditing = userBeforeEditing.resume || [];
 
-  //   if (resumeBeforeEditing.startsWith(filePrefix)) {
-  //     const key = resumeBeforeEditing.substring(filePrefix.length);
-  //     await deleteS3File(key, bucket);
-  //   }
-  // }
+  const keys = [];
+  const filePrefix = process.env.SAVED_FILES_PREFIX;
+
+  if (args.resume) {
+    for (resume of resumeBeforeEditing) {
+      if (args.resume.indexOf(resume) === -1) {
+        if (resume.startsWith(filePrefix)) {
+          const key = resume.substring(filePrefix.length);
+          keys.push(key);
+        }
+      }
+    }
+  }
 
   const photoBeforeEditing = userBeforeEditing.photo;
-  console.log(args.photo, photoBeforeEditing);
-  if (args.photo !== photoBeforeEditing) {
-    const bucket = process.env.AWS_FILEUPLOAD_BUCKET;
-    const filePrefix = process.env.SAVED_FILES_PREFIX;
-    console.log(bucket, filePrefix);
-
-    if (photoBeforeEditing.startsWith(filePrefix)) {
-      const key = photoBeforeEditing.substring(filePrefix.length);
-      await deleteS3File(key, bucket);
+  if (args.photo) {
+    if (args.photo !== photoBeforeEditing) {
+      if (photoBeforeEditing.startsWith(filePrefix)) {
+        const key = photoBeforeEditing.substring(filePrefix.length);
+        keys.push(key);
+      }
     }
+  }
+
+  if (keys.length > 0) {
+    await deleteS3Objects(keys);
   }
 };
 
@@ -347,8 +353,6 @@ module.exports.getLoggedInUser = asyncHandler(async (req, res, next) => {
     return job;
   });
 
-  console.log(user.savedJobs);
-
   return res.status(200).json(user);
 });
 
@@ -448,8 +452,9 @@ module.exports.getLoggedInUserDashboardData = asyncHandler(
 
 module.exports.profileSetup = asyncHandler(async (req, res, next) => {
   const args = req.body;
-  // validate arguments
-
+  if (args.email) {
+    delete args.email;
+  }
   args.isProfileSetupComplete = true;
   const user = await User.findByIdAndUpdate(req.user.id, args, {
     new: true,
@@ -463,6 +468,7 @@ module.exports.profileSetup = asyncHandler(async (req, res, next) => {
 
 module.exports.updateProfile = asyncHandler(async (req, res, next) => {
   const args = req.body;
+  if (args.email) delete args.email;
 
   const userBeforeEditing = await User.findById(req.user.id).select(
     'photo resume'
@@ -471,7 +477,7 @@ module.exports.updateProfile = asyncHandler(async (req, res, next) => {
     new: true,
   });
 
-  // await cleanupStorage(args, userBeforeEditing);
+  await cleanupStorage(args, userBeforeEditing);
 
   return res.status(200).json({
     success: true,

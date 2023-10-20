@@ -72,6 +72,9 @@ const ChatSchema = new mongoose.Schema({
 
   messages: [MessageSchema],
 
+  isChatClosed: Boolean,
+  reportedBy: String,
+
   updatedAt: {
     type: Date,
     default: Date.now,
