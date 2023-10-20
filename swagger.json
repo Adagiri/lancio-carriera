@@ -42,8 +42,8 @@
                 "example": {
                   "first_name": "Ridwan",
                   "last_name": "Aduvoh",
-                  "company_name": "neurona",
-                  "email": "ibrahimridwan47@gmail.com",
+                  "company_name": "fort nox",
+                  "email": "d.buzzi@s-b.swiss",
                   "password": "password",
                   "accountType": "company"
                 }
@@ -72,8 +72,8 @@
                 "type": "object",
                 "example": {
                   "accountType": "company",
-                  "token": "56d150dd850141d572a0087b0a167932e9ba3089",
-                  "code": "1712"
+                  "token": "14d6177dba088accffb309af9df41a88f2a37c66",
+                  "code": "2557"
                 }
               }
             }
@@ -99,10 +99,10 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "idToken": "123456778899",
-                  "email": "krowdee20@gmail.com",
+                  "idToken": "123456778890",
+                  "email": "adagiri@cloudhacks.net",
                   "company_name": "neurona",
-                  "accountType": "company"
+                  "accountType": "personal"
                 }
               }
             }
@@ -129,8 +129,8 @@
                 "type": "object",
                 "example": {
                   "accountType": "company",
-                  "email": "krowdee20@gmail.com",
-                  "password": "password5"
+                  "email": "ibrahimridwan477@gmail.com",
+                  "password": "password"
                 }
               }
             }
@@ -184,7 +184,7 @@
                 "type": "object",
                 "example": {
                   "accountType": "company",
-                  "email": "krowdee20@gmail.com"
+                  "email": "ibrahimridwan47@gmail.com"
                 }
               }
             }
@@ -211,8 +211,8 @@
                 "type": "object",
                 "example": {
                   "accountType": "company",
-                  "code": "6184",
-                  "token": "358e55ab6b34553c7e5155868d344ede75cc9955"
+                  "code": "6371",
+                  "token": "70a4130d68fe1ce5afe0b286d0706492bb5ae21a"
                 }
               }
             }
@@ -239,8 +239,8 @@
                 "type": "object",
                 "example": {
                   "accountType": "company",
-                  "password": "password5",
-                  "token": "358e55ab6b34553c7e5155868d344ede75cc9955"
+                  "password": "password1",
+                  "token": "70a4130d68fe1ce5afe0b286d0706492bb5ae21a"
                 }
               }
             }
@@ -267,7 +267,7 @@
                 "type": "object",
                 "example": {
                   "accountType": "company",
-                  "email": "adagiri1@gmail.com"
+                  "email": "ibrahimridwan47@gmail.com"
                 }
               }
             }
@@ -294,7 +294,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NzkwZGI1ZjE3NGU2YmY2MTlkMWI0NiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3QGdtYWlsLmNvbSIsImlhdCI6MTY4NTc0OTcwMywiZXhwIjoxNjg4MzQxNzAzfQ.YpCeTbE8GURevm2MMijRCdBOdGQ4IlRWsnsJVXUnQrU"
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
           }
         ],
         "responses": {
@@ -399,7 +399,8 @@
             "schema": {
               "type": "string"
             },
-            "example": "thisMonth"
+            "description": "values are 'this-week', 'this-month', 'today'",
+            "example": "this-month"
           }
         ],
         "responses": {
@@ -431,7 +432,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "64ca94f5cb2077b52cf0c05f"
+            "example": "null"
           },
           {
             "name": "limit",
@@ -440,6 +441,24 @@
               "type": "integer"
             },
             "example": "2"
+          },
+          {
+            "name": "case",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "possible values are -  'Message_Received', 'Application_Accepted', 'Job_Closed', 'User_Reported',",
+            "example": "Message_Received"
+          },
+          {
+            "name": "timeFrame",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "possible values are - 'today', 'this-week', 'this-month'",
+            "example": "this-month"
           }
         ],
         "responses": {
@@ -781,7 +800,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTI1YjlhY2MzZDNjN2NkZTM5YmIzNiIsImVtYWlsIjoiYWRhZ2lyaTE0MTdAZ21haWwuY29tIiwiaWF0IjoxNjg4MDU4MzA4LCJleHAiOjE2OTA2NTAzMDh9.vVhAoGmv_VkkiPP9ttOuYRRBGcigKqJd0r90rpoKbuY"
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTYzMzc1MDMsImV4cCI6MTY5ODkyOTUwM30.K_Ua-X9Gpw75xzXGqUzCHLB01WTdrCj9_ttO-gACNIk"
           },
           {
             "name": "duration",
@@ -789,7 +808,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "thisMonth"
+            "example": "this-month"
           }
         ],
         "responses": {
@@ -829,7 +848,25 @@
             "schema": {
               "type": "integer"
             },
-            "example": "6"
+            "example": "2"
+          },
+          {
+            "name": "case",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "possible values are -  'Message_Received', 'Application_Accepted', 'Job_Closed', 'User_Reported',",
+            "example": "Message_Received"
+          },
+          {
+            "name": "timeFrame",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "possible values are - 'today', 'this-week', 'this-month'",
+            "example": "this-month"
           }
         ],
         "responses": {
@@ -853,7 +890,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzhjODBhN2ExMTY4ODZiYmU1YmUxZSIsImVtYWlsIjoiYWxlanV2ZTA1QGljbG91ZC5jb20iLCJpYXQiOjE2OTcxMTAyNzAsImV4cCI6MTY5OTcwMjI3MH0.7k-PNarjF_rWax_EP0SJP_wjxU10MleJ6CAeDB6M99o"
           }
         ],
         "responses": {
@@ -1011,7 +1048,7 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "notificationId": "64ca83d5c9784f45d0dca198"
+                  "notificationId": "64ca959ae0f7fb6b9b0484fc"
                 }
               }
             }
@@ -1111,7 +1148,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0N2E3OTczY2Y2ODU5ZWEzZjNhZDQ4MiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2ODU3NTMwNTgsImV4cCI6MTY4ODM0NTA1OH0.qgoo0ioMZKqyNwCY9s5Aql6xv9FwHnpwp5liNKamNV0"
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTI1YjlhY2MzZDNjN2NkZTM5YmIzNiIsImVtYWlsIjoiYWRhZ2lyaTE0MTdAZ21haWwuY29tIiwiaWF0IjoxNjg3MzU4MDk2LCJleHAiOjE2ODk5NTAwOTZ9.k7cUIobnVnPkrNOu3rtacV_YuCZJ78z_RhTSnmPrfr4"
           },
           {
             "name": "purpose",
@@ -1119,8 +1156,8 @@
             "schema": {
               "type": "string"
             },
-            "description": "possible values include: profile-photo, resume, business-doc, chat",
-            "example": "profile-photo"
+            "description": "possible values include: profile-photo, resume, business-doc, chat, job-post",
+            "example": "chat"
           },
           {
             "name": "contentType",
@@ -1129,7 +1166,7 @@
               "type": "string"
             },
             "description": "possible values include: image/jpeg, image/png, ...",
-            "example": "image/jpeg"
+            "example": "video/webm"
           }
         ],
         "responses": {
@@ -1158,7 +1195,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "image/jpeg"
+            "example": "video/webm"
           },
           {
             "name": "AWSAccessKeyId",
@@ -1230,7 +1267,7 @@
     "/jobs": {
       "get": {
         "tags": ["Jobs"],
-        "summary": "Get Jobs",
+        "summary": "Get Job Listings",
         "parameters": [
           {
             "name": "Authorization",
@@ -1263,6 +1300,51 @@
               "type": "string"
             },
             "example": "64c7883d7a116886bbe5bda8"
+          },
+          {
+            "name": "timeFrame",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "possible values - 'today', 'this-week', 'this-month'",
+            "example": "today"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "possible values - 'part-time', 'full-time', 'internship'",
+            "example": "internship"
+          },
+          {
+            "name": "searchTerm",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search works for 'position' field",
+            "example": "Mid-Level Project Manager"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "possible values - any category",
+            "example": "Engineering"
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "possibled values - any state",
+            "example": "GreNert"
           }
         ],
         "responses": {
@@ -1285,6 +1367,12 @@
                 "example": {
                   "position": "Mid-Level Project Manager",
                   "type": "Vertrag",
+                  "category": "Engineering",
+                  "images": [
+                    "https://lancio-carriera.s3.amazon.com/business-doc/0299292828828828.jpeg",
+                    "https://lancio-carriera.s3.amazon.com/business-doc/0299292828828820.jpeg"
+                  ],
+                  "location": "Greenert",
                   "about": "Some description here",
                   "salary": "1000 - 1500",
                   "requirements": [
@@ -1335,6 +1423,11 @@
                   "jobId": "64ca83d4c9784f45d0dca193",
                   "position": "Senior Research Assistant",
                   "type": "Vertrag",
+                  "category": "Engineering",
+                  "images": [
+                    "https://lancio-carriera.s3.amazon.com/business-doc/0299292828828828.jpeg",
+                    "https://lancio-carriera.s3.amazon.com/business-doc/0299292828828820.jpeg"
+                  ],
                   "about": "Some description here",
                   "salary": "1000 - 1500",
                   "requirements": [
@@ -1348,7 +1441,7 @@
                   ],
                   "isHiringUrgently": true,
                   "allowMultipleCandidate": false,
-                  "isClosed": true,
+                  "isClosed": false,
                   "isRemote": true
                 }
               }
@@ -1378,7 +1471,7 @@
     "/jobs/by-a-company/64c7883d7a116886bbe5bda8": {
       "get": {
         "tags": ["Jobs"],
-        "summary": "Get Jobs posted by a certain company",
+        "summary": "Get Job postings of a company",
         "parameters": [
           {
             "name": "Authorization",
@@ -1410,7 +1503,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTI1YjlhY2MzZDNjN2NkZTM5YmIzNiIsImVtYWlsIjoiYWRhZ2lyaTE0MTdAZ21haWwuY29tIiwiaWF0IjoxNjg4MDU4MzA4LCJleHAiOjE2OTA2NTAzMDh9.vVhAoGmv_VkkiPP9ttOuYRRBGcigKqJd0r90rpoKbuY"
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
           },
           {
             "name": "cursor",
@@ -1466,7 +1559,7 @@
     "/jobs/company": {
       "get": {
         "tags": ["Jobs"],
-        "summary": "Get loggedin company's jobs",
+        "summary": "Get Job Postings",
         "parameters": [
           {
             "name": "Authorization",
@@ -1499,6 +1592,31 @@
               "type": "boolean"
             },
             "example": "false"
+          },
+          {
+            "name": "timeFrame",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "possible values - today | this-week | this-month",
+            "example": "this-month"
+          },
+          {
+            "name": "minApplicantCount",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "0"
+          },
+          {
+            "name": "maxApplicantCount",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "100"
           }
         ],
         "responses": {
@@ -1546,8 +1664,8 @@
             "schema": {
               "type": "string"
             },
-            "description": "Accepted Values are: 'thisWeek', 'thisMonth', 'today'. Ommiting this field from the query results in all matches where the logged-in user is an applicant; been returned.",
-            "example": "thisMonth"
+            "description": "Accepted Values are: 'this-week', 'this-month', 'today'. Ommiting this field from the query results in all matches where the logged-in user is an applicant; been returned.",
+            "example": "this-month"
           }
         ],
         "responses": {
@@ -1764,7 +1882,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4N2M4N2ExMTY4ODZiYmU1YmQ5YiIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDI3NDksImV4cCI6MTY5MzQ5NDc0OX0.aEcjONAs9xkOOxURwKm5sjkJcPLAUTF_XLfpL8QCRsw"
           }
         ],
         "responses": {
@@ -1788,7 +1906,60 @@
             "schema": {
               "type": "string"
             },
-            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0OTI1YjlhY2MzZDNjN2NkZTM5YmIzNiIsImVtYWlsIjoiYWRhZ2lyaTE0MTdAZ21haWwuY29tIiwiaWF0IjoxNjg3MzU0ODUzLCJleHAiOjE2ODk5NDY4NTN9.GLMQfhMBJjvptK0vIR-HRfnWIrUvcTv3ymIJxrwEj3g"
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc4ODNkN2ExMTY4ODZiYmU1YmRhOCIsImVtYWlsIjoiaWJyYWhpbXJpZHdhbjQ3N0BnbWFpbC5jb20iLCJpYXQiOjE2OTA5MDM1NzgsImV4cCI6MTY5MzQ5NTU3OH0.WwI5LvdlezFC27CdUGl-cD8RPSwtCAXmvRBka7nN19I"
+          },
+          {
+            "name": "hasBeenRead",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "possible values - true | false",
+            "example": "true"
+          },
+          {
+            "name": "searchTerm",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "beatrice"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/chats/report": {
+      "put": {
+        "tags": ["Chats"],
+        "summary": "Report Chat",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "chatId": "64d428c0380bc4414c0af505"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YWVkNjU3M2JkZDM4OGFkYTQwNjBmZiIsImVtYWlsIjoiYWxlanV2ZTA1QGljbG91ZC5jb20iLCJpYXQiOjE2OTc3NzI5NjgsImV4cCI6MTcwMDM2NDk2OH0.c9t5p0zm9ZDaQ4MmMwQl6l9nqC3kwsLJ_PQvlvo-stU"
           }
         ],
         "responses": {
