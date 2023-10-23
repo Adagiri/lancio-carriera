@@ -115,7 +115,6 @@ module.exports.isJobSavedByUser = (jobId, savedJobs) => {
 
 module.exports.getTimeFrame = (timeFrame) => {
   const today = new Date();
-
   if (timeFrame === 'today') {
     return { $gte: startOfDay(today) };
   } else if (timeFrame === 'this-week') {

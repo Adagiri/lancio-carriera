@@ -524,7 +524,7 @@ module.exports.getNotificationsForUser = asyncHandler(
     if (req.query.case) {
       query.case = req.query.case.replace('_', ' ');
     }
-    const timeFrame = query.timeFrame || 'none';
+    const timeFrame = req.query.timeFrame || 'none';
     query.createdAt = getTimeFrame(timeFrame);
 
     // Find the document corresponding to the cursor, if available

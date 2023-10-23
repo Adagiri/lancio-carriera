@@ -38,6 +38,4 @@ https://www.instagram.com/lancio.carriera/
 
 
 # Immediate
-- report a chat api _done_
-- filters in job post (categories)
-- /chats (get) - add [age, resume, email, softSkills, ...]user & [city, state, country]company _done_
+getAcceptedApplicants

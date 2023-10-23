@@ -72,7 +72,7 @@ const ChatSchema = new mongoose.Schema({
 
   messages: [MessageSchema],
 
-  isChatClosed: Boolean,
+  isChatClosed: { type: Boolean, default: false },
   reportedBy: String,
 
   updatedAt: {

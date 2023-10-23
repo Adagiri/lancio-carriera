@@ -52,8 +52,6 @@ module.exports.getChats = asyncHandler(async (req, res, next) => {
 
   // Filter the chats based on the hasBeenRead field
   const hasBeenRead = String(query.hasBeenRead);
-  console.log('hasBeenRead: ', hasBeenRead, typeof hasBeenRead);
-  // Check if hasBeenRead is a valid boolean
   // If hasBeenRead is true, filter chats that have been read (unreadMessageCount <= 0)
   if (hasBeenRead === 'true') {
     data = data.filter((chat) => chat.unreadMessageCount <= 0);
