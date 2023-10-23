@@ -270,8 +270,6 @@ module.exports.loginWithEmail = asyncHandler(async (req, res, next) => {
     })
     .select('+password');
 
-  console.log('user', user);
-
   if (!user) {
     return next(
       new ErrorResponse(400, {

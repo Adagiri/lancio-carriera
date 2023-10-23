@@ -233,25 +233,30 @@ module.exports.getJobListings = asyncHandler(async (req, res, next) => {
   const location = query.location || '';
   const timeFrame = query.timeFrame || 'none';
   const searchTerm = query.searchTerm || '';
+  const minApplicantCount = Math.abs(Number(query.minApplicantCount)) || 0;
+  const maxApplicantCount = Math.abs(Number(query.maxApplicantCount)) || 1000;
   const regex = new RegExp(searchTerm, 'i');
 
   filter.createdAt = getTimeFrame(timeFrame);
-  filter.position = { $regex: regex };
-  filter.type = type;
-  filter.category = Array.isArray(category) ? { $in: category } : category;
-  filter.location = location;
+  searchTerm && (filter.position = { $regex: regex });
+  type && (filter.type = type);
+  if (category && typeof category === 'string') {
+    filter.category = category;
+  }
+  if (Array.isArray(category) && category.length > 0) {
+    filter.category = { $in: category };
+  }
+  location && (filter.location = location);
+  filter.applicantsCount = { $gte: minApplicantCount, $lte: maxApplicantCount };
 
   delete filter.limit;
   delete filter.cursor;
   delete filter.timeFrame;
   delete filter.searchTerm;
 
-  let data = await Job.find({ ...query })
+  let data = await Job.find({ ...filter })
     .sort({ _id: -1 })
-    .populate(
-      'company',
-      'company_name photo address state country city email'
-    )
+    .populate('company', 'company_name photo address state country city email')
     .populate({
       path: 'applicants.profile',
       select:
@@ -350,7 +355,7 @@ module.exports.getJobPostings = asyncHandler(async (req, res, next) => {
 
   filter.applicantsCount = { $gte: minApplicantCount, $lte: maxApplicantCount };
   filter.createdAt = getTimeFrame(timeFrame);
-  filter.position = { $regex: regex };
+  searchTerm && (filter.position = { $regex: regex });
 
   delete filter.limit;
   delete filter.cursor;
