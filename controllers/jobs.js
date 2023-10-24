@@ -349,6 +349,7 @@ module.exports.getJobPostings = asyncHandler(async (req, res, next) => {
 
   const minApplicantCount = Math.abs(Number(query.minApplicantCount)) || 0;
   const maxApplicantCount = Math.abs(Number(query.maxApplicantCount)) || 10000;
+  const category = query.category || [];
   const timeFrame = query.timeFrame || 'none';
   const searchTerm = query.searchTerm || '';
   const regex = new RegExp(searchTerm, 'i');
@@ -356,6 +357,12 @@ module.exports.getJobPostings = asyncHandler(async (req, res, next) => {
   filter.applicantsCount = { $gte: minApplicantCount, $lte: maxApplicantCount };
   filter.createdAt = getTimeFrame(timeFrame);
   searchTerm && (filter.position = { $regex: regex });
+  if (category && typeof category === 'string') {
+    filter.category = category;
+  }
+  if (Array.isArray(category) && category.length > 0) {
+    filter.category = { $in: category };
+  }
 
   delete filter.limit;
   delete filter.cursor;
