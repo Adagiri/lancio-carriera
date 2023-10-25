@@ -35,11 +35,3 @@ users
  - get admin
 
 https://www.instagram.com/lancio.carriera/
-
-
-# Immediate
-getAcceptedApplicants
-
-
-company token - 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzhjODBhN2ExMTY4ODZiYmU1YmUxZSIsImVtYWlsIjoiYWxlanV2ZTA1QGljbG91ZC5jb20iLCJpYXQiOjE2OTgwNTgxNDYsImV4cCI6MTcwMDY1MDE0Nn0.qzXfk4rA2HsVsh3kANm6t1vAx5ELaUJ3LpiH2UMgW1Q
