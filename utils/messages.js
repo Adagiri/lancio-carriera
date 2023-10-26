@@ -249,15 +249,44 @@ module.exports.sendWelcomeEmailForUser = async ({ first_name, email }) => {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moniedrop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007BFF;
+        }
+        p {
+            font-size: 16px;
+            color: #333;
+            margin: 10px 0;
+        }
+    </style>
+    <title>Willkommen bei Lancio Carriera</title>
 </head>
 <body>
-    <p>Hi ${first_name}, welcome to Lancio Carriera</p>
+    <div class="container">
+        <h1>Hallo, ${first_name}!</h1>
+        <p>Willkommen bei Lancio Carriera. Wir freuen uns, dass Sie unserer Community beitreten.</p>
+    </div>
 </body>
-</html>`;
+</html>
+`;
 
   try {
-    const emailArgs = generateEmailArguments(null, email, 'Welcome', message);
+    const emailArgs = generateEmailArguments(null, email, 'Willkommen', message);
     await sendEmail(emailArgs);
   } catch (error) {
     console.log(error, 'error whilst sending welcome message to user');
@@ -271,15 +300,44 @@ module.exports.sendWelcomeEmailForCompany = async ({ email }) => {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moniedrop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007BFF;
+        }
+        p {
+            font-size: 16px;
+            color: #333;
+            margin: 10px 0;
+        }
+    </style>
+    <title>Willkommen bei Lancio Carriera</title>
 </head>
 <body>
-    <p>Hi, welcome to Lancio Carriera</p>
+    <div class="container">
+        <h1>Hallo!</h1>
+        <p>Willkommen bei Lancio Carriera. Wir freuen uns, dass Sie unserer Community beitreten.</p>
+    </div>
 </body>
-</html>`;
+</html>
+`;
 
   try {
-    const emailArgs = generateEmailArguments(null, email, 'Welcome', message);
+    const emailArgs = generateEmailArguments(null, email, 'Willkommen', message);
     await sendEmail(emailArgs);
   } catch (error) {
     console.log(error, 'error whilst sending welcome message to user');
