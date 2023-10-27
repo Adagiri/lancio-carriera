@@ -11,19 +11,46 @@ module.exports.sendAccountActivationEmailForUser = async ({
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moniedrop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #fff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+    <title>Account Aktivierung</title>
 </head>
 <body>
-    <p>Hi ${first_name}, please use the code below to activate your account.</p>
-    <p>${code}</p>
+    <div class="container">
+        <h1>Willkommen, ${first_name}!</h1>
+        <p>Um Ihr Konto zu aktivieren, verwenden Sie bitte den folgenden Code:</p>
+        <p style="font-size: 24px; color: #007BFF;">${code}</p>
+    </div>
 </body>
-</html>`;
-
+</html>
+`
   try {
     const emailArgs = generateEmailArguments(
       null,
       email,
-      'Activate your account',
+      'aktiviere deinen Account',
       message
     );
     await sendEmail(emailArgs);
@@ -42,19 +69,46 @@ module.exports.sendAccountActivationEmailForCompany = async ({
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moniedrop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #fff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+    <title>Account Aktivierung</title>
 </head>
 <body>
-    <p>Hi, please use the code below to activate your account.</p>
-    <p>${code}</p>
+    <div class="container">
+    <h1>Willkommen!</h1>
+        <p>Um Ihr Konto zu aktivieren, verwenden Sie bitte den folgenden Code:</p>
+        <p style="font-size: 24px; color: #007BFF;">${code}</p>
+    </div>
 </body>
-</html>`;
-
+</html>
+`
   try {
     const emailArgs = generateEmailArguments(
       null,
       email,
-      'Activate your account',
+      'aktiviere deinen Account',
       message
     );
     await sendEmail(emailArgs);
@@ -70,20 +124,54 @@ module.exports.sendResetPasswordEmailForUser = async (email, code) => {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moniedrop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007BFF;
+        }
+        p {
+            font-size: 16px;
+            color: #333;
+            margin: 10px 0;
+        }
+        .code {
+            font-size: 24px;
+            color: #007BFF;
+        }
+    </style>
+    <title>Lancio Carriera – Passwort zurücksetzen</title>
 </head>
 <body>
-    <p>Hi, please use the code below to reset your password. However, if you did not initiate a reset password request, please ignore this mail</p>
-    <p>>${code}</a></p>
-    <p>Please note that link expires in 10 minutes</p>
+    <div class="container">
+        <h1>Hallo,</h1>
+        <p>Verwenden Sie den folgenden Code, um Ihr Passwort zurückzusetzen:</p>
+        <p class="code">${code}</p>
+        <p>Wenn Sie dieses Zurücksetzen des Passworts nicht veranlasst haben, ignorieren Sie diese E-Mail bitte.</p>
+        <p>Bitte beachten Sie, dass der Reset-Link für die nächsten 10 Minuten gültig ist.</p>
+    </div>
 </body>
-</html>`;
+</html>
+`;
 
   try {
     const emailArgs = generateEmailArguments(
       null,
       email,
-      'Reset your Password',
+      'Setze dein Passwort zurück',
       message
     );
     await sendEmail(emailArgs);
@@ -99,20 +187,53 @@ module.exports.sendResetPasswordEmailForCompany = async (email, code) => {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moniedrop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007BFF;
+        }
+        p {
+            font-size: 16px;
+            color: #333;
+            margin: 10px 0;
+        }
+        .code {
+            font-size: 24px;
+            color: #007BFF;
+        }
+    </style>
+    <title>Lancio Carriera – Passwort zurücksetzen</title>
 </head>
 <body>
-    <p>Hi, please use the code below to reset your password. However, if you did not initiate a reset password request, please ignore this mail</p>
-    <p>>${code}</a></p>
-    <p>Please note that link expires in 10 minutes</p>
+    <div class="container">
+        <h1>Hallo,</h1>
+        <p>Verwenden Sie den folgenden Code, um Ihr Passwort zurückzusetzen:</p>
+        <p class="code">${code}</p>
+        <p>Wenn Sie dieses Zurücksetzen des Passworts nicht veranlasst haben, ignorieren Sie diese E-Mail bitte.</p>
+        <p>Bitte beachten Sie, dass der Reset-Link für die nächsten 10 Minuten gültig ist.</p>
+    </div>
 </body>
-</html>`;
-
+</html>
+`;
   try {
     const emailArgs = generateEmailArguments(
       null,
       email,
-      'Reset your Password',
+      'Setze dein Passwort zurück',
       message
     );
     await sendEmail(emailArgs);
@@ -128,15 +249,44 @@ module.exports.sendWelcomeEmailForUser = async ({ first_name, email }) => {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moniedrop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007BFF;
+        }
+        p {
+            font-size: 16px;
+            color: #333;
+            margin: 10px 0;
+        }
+    </style>
+    <title>Willkommen bei Lancio Carriera</title>
 </head>
 <body>
-    <p>Hi ${first_name}, welcome to Lancio Carriera</p>
+    <div class="container">
+        <h1>Hallo, ${first_name}!</h1>
+        <p>Willkommen bei Lancio Carriera. Wir freuen uns, dass Sie unserer Community beitreten.</p>
+    </div>
 </body>
-</html>`;
+</html>
+`;
 
   try {
-    const emailArgs = generateEmailArguments(null, email, 'Welcome', message);
+    const emailArgs = generateEmailArguments(null, email, 'Willkommen', message);
     await sendEmail(emailArgs);
   } catch (error) {
     console.log(error, 'error whilst sending welcome message to user');
@@ -150,15 +300,44 @@ module.exports.sendWelcomeEmailForCompany = async ({ email }) => {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moniedrop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007BFF;
+        }
+        p {
+            font-size: 16px;
+            color: #333;
+            margin: 10px 0;
+        }
+    </style>
+    <title>Willkommen bei Lancio Carriera</title>
 </head>
 <body>
-    <p>Hi, welcome to Lancio Carriera</p>
+    <div class="container">
+        <h1>Hallo!</h1>
+        <p>Willkommen bei Lancio Carriera. Wir freuen uns, dass Sie unserer Community beitreten.</p>
+    </div>
 </body>
-</html>`;
+</html>
+`;
 
   try {
-    const emailArgs = generateEmailArguments(null, email, 'Welcome', message);
+    const emailArgs = generateEmailArguments(null, email, 'Willkommen', message);
     await sendEmail(emailArgs);
   } catch (error) {
     console.log(error, 'error whilst sending welcome message to user');
