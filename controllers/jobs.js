@@ -504,10 +504,6 @@ module.exports.getNewApplicantsCount = asyncHandler(async (req, res, next) => {
 
   const count = result.length > 0 ? result[0].count : 0;
 
-  await Company.findByIdAndUpdate(userId, {
-    lastTimeNewApplicantsWasViewed: new Date(),
-  });
-
   return res.json({
     count: count,
   });
