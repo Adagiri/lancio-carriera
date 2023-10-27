@@ -47,7 +47,6 @@ const cleanupStorage = async (args, companyBeforeEditing) => {
   }
 };
 
-
 const getTotalApplicationsCount = async (userId, currentTime) => {
   const result = await Job.aggregate([
     { $unwind: '$applicants' },
@@ -588,6 +587,18 @@ module.exports.markAllNotificationsAsRead = asyncHandler(
       );
     });
     session.endSession();
+
+    return res.json({
+      success: true,
+    });
+  }
+);
+
+module.exports.markNewApplicantsAsViewed = asyncHandler(
+  async (req, res, next) => {
+    await Company.findByIdAndUpdate(req.user.id, {
+      lastTimeNewApplicantsWasViewed: new Date(),
+    });
 
     return res.json({
       success: true,

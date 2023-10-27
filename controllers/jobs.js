@@ -473,10 +473,6 @@ module.exports.getNewApplicantsList = asyncHandler(async (req, res, next) => {
   const hasNextPage = !!nextPageCursor;
   data = data.slice(start, end);
 
-  await Company.findByIdAndUpdate(userId, {
-    lastTimeNewApplicantsWasViewed: new Date(),
-  });
-
   return res.json({
     hasNextPage,
     nextPageCursor,

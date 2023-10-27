@@ -12,6 +12,7 @@ const {
   reportACompany,
   getAcceptedApplicants,
   markAllNotificationsAsRead,
+  markNewApplicantsAsViewed
 } = require('../controllers/companies');
 const { protectCompany, protectUser, protect } = require('../middlewares/auth');
 const router = express.Router();
@@ -25,6 +26,8 @@ router.get('/:id', protect, getCompanyById);
 router.put('/profile-setup', protectCompany, profileSetup);
 router.put('/update-profile', protectCompany, updateProfile);
 router.post('/report', protectUser, reportACompany);
+
+router.put('/mark-new-applicants-as-viewed', protectCompany, markNewApplicantsAsViewed)
 
 router.put(
   '/edit-notification-settings',

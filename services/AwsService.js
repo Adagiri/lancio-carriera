@@ -41,8 +41,6 @@ const deleteS3File = async (key, bucket) => {
     },
   });
 
-  console.log(s3)
-  console.log(key, 'key');
   var params = {
     Bucket: bucket,
     Key: key,
