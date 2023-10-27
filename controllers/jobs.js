@@ -27,7 +27,7 @@ const sendNotificationOnApplicantApplied = async ({ user, job }) => {
     title: user.first_name,
     titleGe: user.first_name,
     body: `Applied to your job: ${job.position}`,
-    bodyGe: `Auf Ihren Job angewendet: ${job.position}`,
+    bodyGe: `Hat sich für Ihren Job beworben: ${job.position}`,
     user: user._id,
     subject: job._id,
     subjectType: 'Job',
@@ -302,7 +302,8 @@ module.exports.getJobById = asyncHandler(async (req, res, next) => {
     .populate('company', 'company_name photo address state country city email')
     .populate({
       path: 'applicants.profile',
-      select: 'first_name last_name age photo country state city',
+      select:
+        'first_name last_name age photo country state city softSkills bio email',
     });
 
   if (!job) {
@@ -602,7 +603,7 @@ module.exports.editJob = asyncHandler(async (req, res, next) => {
     .populate('company')
     .populate(
       'applicants.profile',
-      'first_name last_name age photo country state city notificationSettings'
+      'first_name last_name age photo country state city notificationSettings softSkills bio email'
     );
 
   if (!job) {
@@ -642,21 +643,6 @@ module.exports.applyToJob = asyncHandler(async (req, res, next) => {
     );
   }
 
-  // if (
-  //   job.applicants.findIndex(
-  //     (applicant) => applicant.profile.toString() === userId
-  //   ) !== -1
-  // ) {
-  //   return next(
-  //     new ErrorResponse(404, {
-  //       messageEn: `You already applied for this job`,
-  //       messageGe: `Sie haben sich bereits für diese Stelle beworben`,
-  //     })
-  //   );
-  // }
-
-  console.log(req.user, job.applicants);
-
   const newApplicant = {
     profile: userId,
     resume: args.resume,
@@ -684,7 +670,7 @@ module.exports.acceptApplicant = asyncHandler(async (req, res, next) => {
   const job = await Job.findById(jobId).populate('company').populate({
     path: 'applicants.profile',
     select:
-      'first_name last_name age photo country state city notificationSettings',
+      'first_name last_name age photo country state city notificationSettings softSkills bio email',
   });
 
   // Job Exists or Not
