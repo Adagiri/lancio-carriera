@@ -646,7 +646,7 @@ module.exports.sendEmailToAUser = asyncHandler(async (req, res, next) => {
   const userEmail = req.body.email;
   const emailBody = req.body.message;
   const company_name = req.user.company_name;
-  const subject = `Message from ${company_name}`;
+  const subject = `Nachricht von ${company_name}`;
 
   await sendPersonalizedEmailToUser({
     email: userEmail,
