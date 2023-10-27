@@ -18,7 +18,7 @@ module.exports.getChats = asyncHandler(async (req, res, next) => {
     searchQuery.company = user.id;
   }
 
-  if (accountType === 'user') {
+  if (accountType === 'personal') {
     searchQuery.user = user.id;
   }
 
@@ -119,7 +119,7 @@ module.exports.getChatById = asyncHandler(async (req, res, next) => {
     chat.companyUnreadMessages = 0;
   }
 
-  if (req.user.accountType === 'user') {
+  if (req.user.accountType === 'personal') {
     chat.userUnreadMessages = 0;
   }
 
