@@ -29,12 +29,12 @@ module.exports.getChats = asyncHandler(async (req, res, next) => {
     .select('-messages')
     .populate({
       path: 'company',
-      select: 'company_name photo accountType online city state country photo',
+      select: 'company_name photo accountType online city state country photo email',
     })
     .populate({
       path: 'user',
       select:
-        'first_name last_name photo accountType online age resume email softSkills city state country photo',
+        'first_name last_name photo accountType online age resume email softSkills city state country photo bio',
     });
 
   data = data.map((chat) => {
@@ -98,12 +98,12 @@ module.exports.getChatById = asyncHandler(async (req, res, next) => {
   let chat = await Chat.findById(chatId)
     .populate({
       path: 'company',
-      select: 'company_name photo accountType online city state country photo',
+      select: 'company_name photo accountType online city state country photo email',
     })
     .populate({
       path: 'user',
       select:
-        'first_name last_name photo accountType online age resume email softSkills city state country photo',
+        'first_name last_name photo accountType online age resume email softSkills city state country photo bio',
     });
 
   if (!chat) {
@@ -150,12 +150,12 @@ module.exports.getChatsByCompanyAndUserId = asyncHandler(
       .populate({
         path: 'company',
         select:
-          'company_name photo accountType online city state country photo',
+          'company_name photo accountType online city state country photo email',
       })
       .populate({
         path: 'user',
         select:
-          'first_name last_name photo accountType online age resume email softSkills city state country photo',
+          'first_name last_name photo accountType online age resume email softSkills city state country photo bio',
       });
 
     return res.json({
