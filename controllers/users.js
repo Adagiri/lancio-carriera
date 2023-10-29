@@ -326,7 +326,8 @@ module.exports.getLoggedInUser = asyncHandler(async (req, res, next) => {
     path: 'savedJobs',
     populate: [
       {
-        path: 'company'
+        path: 'company',
+        select: 'company_name photo accountType online city state country photo email',
       },
       {
         path: 'applicants.profile',
