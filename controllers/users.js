@@ -326,8 +326,7 @@ module.exports.getLoggedInUser = asyncHandler(async (req, res, next) => {
     path: 'savedJobs',
     populate: [
       {
-        path: 'company',
-        select: 'company_phone photo', // Replace with the fields you want to populate from the 'Company' model
+        path: 'company'
       },
       {
         path: 'applicants.profile',
