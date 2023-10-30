@@ -367,7 +367,7 @@ module.exports.getLoggedInUserProfileViews = asyncHandler(
     const duration = query.duration;
     const targetTime =
       duration === 'thisWeek'
-        ? startOfWeek(today)
+        ? startOfWeek(today, {weekStartsOn: 1})
         : duration === 'thisMonth'
         ? startOfMonth(today)
         : duration === 'today'
@@ -422,7 +422,7 @@ module.exports.getLoggedInUserDashboardData = asyncHandler(
     const today = new Date();
     const targetTime =
       duration === 'this-week'
-        ? startOfWeek(today)
+        ? startOfWeek(today, {weekStartsOn: 1})
         : duration === 'this-month'
         ? startOfMonth(today)
         : duration === 'today'

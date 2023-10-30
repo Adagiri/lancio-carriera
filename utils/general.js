@@ -118,10 +118,10 @@ module.exports.getTimeFrame = (timeFrame) => {
   if (timeFrame === 'today') {
     return { $gte: startOfDay(today) };
   } else if (timeFrame === 'this-week') {
-    return { $gte: startOfWeek(today) };
+    return { $gte: startOfWeek(today, { weekStartsOn: 1 }) };
   } else if (timeFrame === 'this-month') {
     return { $gte: startOfMonth(today) };
   } else {
-    return {$gte: new Date('2023-01-01')}
+    return { $gte: new Date('2023-01-01') };
   }
 };

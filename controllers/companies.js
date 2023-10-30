@@ -376,7 +376,7 @@ module.exports.getLoggedInCompanyDashboardData = asyncHandler(
     const today = new Date();
     const targetTime =
       duration === 'this-week'
-        ? startOfWeek(today)
+        ? startOfWeek(today, { weekStartsOn: 1 })
         : duration === 'this-month'
         ? startOfMonth(today)
         : duration === 'today'
