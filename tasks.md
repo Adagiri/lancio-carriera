@@ -1,14 +1,19 @@
 # TODO
-add validations in some endpoints
 change Email sending setup
 swap AWS credentials
 prepare live credentials for database
 deploy api to production
 
 # Admin Dashboard
+register
 login - email & password
 forgot password 
 logout
+admins
+ - create admins
+ - get admins (add filters)
+ - get admin
+ 
 jobs
  - home data (job count[all time, current month]) [filters - this month, this week, today, all time]
    - verified companies, verified postings
@@ -17,6 +22,11 @@ jobs
  - get applicants of a job (pagination)
  - delete job (company recieves notification)
 
+ users
+ - home data (users count[all time, current month]) [filters - this month, this week, today, all time] (age range)
+ - list of jobs applied
+ - get users (add filters)
+
 company
  - home data (company count[all time, current month]) [filters - this month, this week, today, all time]
  - verify company
@@ -24,14 +34,8 @@ company
  - get company
  - get company jobs
 
-users
- - home data (users count[all time, current month]) [filters - this month, this week, today, all time] (age range)
- - list of jobs applied
- - get users (add filters)
 
- admins
- - create admins
- - get admins (add filters)
- - get admin
+
+
 
 https://www.instagram.com/lancio.carriera/

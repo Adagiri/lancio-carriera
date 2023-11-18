@@ -12,7 +12,6 @@ const {
 } = require('../utils/messages');
 const {
   generateVerificationCode,
-  generateRandomNumbers,
   getSignedJwtToken,
   getEncryptedToken,
   confirmPassword,
