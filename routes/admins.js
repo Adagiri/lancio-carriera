@@ -16,6 +16,7 @@ const { protectAdmin, authorize } = require('../middlewares/auth');
 const router = express.Router();
 
 router.get('/', protectAdmin, getAdmins);
+router.get('/:adminId', protectAdmin, getAdmin);
 
 router.post('/register', register);
 router.post('/login', login);
@@ -23,7 +24,6 @@ router.post('/send-reset-password-link', sendResetPasswordLink);
 router.post('/reset-password', resetPassword);
 
 router.post('/create', protectAdmin, authorize('master'), createAdmin);
-router.get('/:adminId', protectAdmin, getAdmin);
 
 router.delete('/', protectAdmin, deleteAccount);
 router.delete('/by-email', deleteAccountByEmail);

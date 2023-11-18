@@ -15,16 +15,16 @@ module.exports.register = asyncHandler(async (req, res, next) => {
   const validators = ['name', 'email', 'role', 'password'];
 
   const args = {};
-  for (const key of validators) {
-    const value = req.body[key];
+  for (const elem of validators) {
+    const value = req.body[elem];
 
     if (value) {
-      args[key] = value;
+      args[elem] = value;
     } else {
       return next(
         new ErrorResponse(400, {
-          messageEn: `${key} is required`,
-          messageGe: `${key} ist erforderlich`,
+          messageEn: `${elem} is required`,
+          messageGe: `${elem} ist erforderlich`,
         })
       );
     }
@@ -110,7 +110,21 @@ module.exports.getAdmin = asyncHandler(async (req, res, next) => {
 });
 
 module.exports.getAdmins = asyncHandler(async (req, res, next) => {
-  const admins = await Admin.find().sort({ _id: -1 });
+  const allowedFilters = ['name', 'email', 'role'];
+  const query = req.query;
+
+  for (key in query) {
+    if (allowedFilters.indexOf(key) === -1) {
+      return next(
+        new ErrorResponse(400, {
+          messageEn: `Invalid filter: ${key}`,
+          messageGe: `Ungültiger Filter: ${key}`,
+        })
+      );
+    }
+  }
+  
+  let admins = await Admin.find(query).sort({ _id: -1 });
 
   return res.status(200).json(admins);
 });
@@ -161,10 +175,12 @@ module.exports.resetPassword = asyncHandler(async (req, res, next) => {
   const { token, password } = req.body;
 
   if (!password || !token) {
-    new ErrorResponse(400, {
-      messageEn: 'Password and Token are required',
-      messageGe: 'Passwort und Token sind erforderlich',
-    });
+    return next(
+      new ErrorResponse(400, {
+        messageEn: 'Password and Token are required',
+        messageGe: 'Passwort und Token sind erforderlich',
+      })
+    );
   }
   const encryptedToken = getEncryptedToken(token);
 
@@ -306,15 +322,15 @@ module.exports.createAdmin = asyncHandler(async (req, res, next) => {
   const validators = ['name', 'email', 'role', 'password'];
 
   const args = {};
-  for (const key of validators) {
-    const value = req.body[key];
+  for (const elem of validators) {
+    const value = req.body[elem];
     if (value) {
-      args[key] = value;
+      args[elem] = value;
     } else {
       return next(
         new ErrorResponse(400, {
-          messageEn: `${key} is required`,
-          messageGe: `${key} ist erforderlich`,
+          messageEn: `${elem} is required`,
+          messageGe: `${elem} ist erforderlich`,
         })
       );
     }
