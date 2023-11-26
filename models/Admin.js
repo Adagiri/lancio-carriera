@@ -32,9 +32,8 @@ const AdminSchema = new mongoose.Schema({
 
   role: {
     type: String,
-    required: true,
+    enum: ['moderator', 'master', 'owner'],
     default: 'moderator',
-    enum: ['moderator', 'master'],
   },
 
   resetPasswordToken: String,

@@ -55,6 +55,15 @@ module.exports.protectUser = asyncHandler(async (req, res, next) => {
       );
     }
 
+    if (err.message === 'invalid token') {
+      return next(
+        new ErrorResponse(401, {
+          messageEn: 'Please log in to continue',
+          messageGe: 'bitte einloggen zum Fortfahren',
+        })
+      );
+    }
+
     return next(
       new ErrorResponse(500, {
         messageEn: 'Network error',
@@ -111,6 +120,15 @@ module.exports.protectCompany = asyncHandler(async (req, res, next) => {
       );
     }
 
+    if (err.message === 'invalid token') {
+      return next(
+        new ErrorResponse(401, {
+          messageEn: 'Please log in to continue',
+          messageGe: 'bitte einloggen zum Fortfahren',
+        })
+      );
+    }
+
     return next(
       new ErrorResponse(500, {
         messageEn: 'Network error',
@@ -159,6 +177,15 @@ module.exports.protectAdmin = asyncHandler(async (req, res, next) => {
     console.log(err);
 
     if (err.message === 'jwt expired') {
+      return next(
+        new ErrorResponse(401, {
+          messageEn: 'Please log in to continue',
+          messageGe: 'bitte einloggen zum Fortfahren',
+        })
+      );
+    }
+
+    if (err.message === 'invalid token') {
       return next(
         new ErrorResponse(401, {
           messageEn: 'Please log in to continue',
@@ -224,8 +251,6 @@ module.exports.protect = asyncHandler(async (req, res, next) => {
 
     next();
   } catch (err) {
-    console.log(err);
-
     if (err.message === 'jwt expired') {
       return next(
         new ErrorResponse(401, {
@@ -234,6 +259,15 @@ module.exports.protect = asyncHandler(async (req, res, next) => {
         })
       );
     }
+    if (err.message === 'invalid token') {
+      return next(
+        new ErrorResponse(401, {
+          messageEn: 'Please log in to continue',
+          messageGe: 'bitte einloggen zum Fortfahren',
+        })
+      );
+    }
+
     return next(
       new ErrorResponse(500, {
         messageEn: 'Network error',

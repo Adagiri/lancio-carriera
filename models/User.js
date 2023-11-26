@@ -84,6 +84,8 @@ const UserSchema = new mongoose.Schema({
     type: [{ type: mongoose.ObjectId, ref: 'Job' }],
   },
 
+  jobCount: { type: Number, default: 0 },
+
   unreadNotifications: {
     type: Number,
     default: 0,

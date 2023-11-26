@@ -519,7 +519,7 @@ module.exports.getUserJobs = asyncHandler(async (req, res, next) => {
   const duration = query.duration;
   const targetTime =
     duration === 'this-week'
-      ? startOfWeek(today, {weekStartsOn: 1})
+      ? startOfWeek(today, { weekStartsOn: 1 })
       : duration === 'this-month'
       ? startOfMonth(today)
       : duration === 'today'
@@ -644,6 +644,8 @@ module.exports.applyToJob = asyncHandler(async (req, res, next) => {
   job.applicants.push(newApplicant);
   job.applicantsCount += 1;
   await job.save();
+
+  await User.findByIdAndUpdate(userId, { $inc: { jobCount: 1 } });
 
   await sendNotificationOnApplicantApplied({
     user: req.user,
