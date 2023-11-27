@@ -22,6 +22,10 @@ const {
 const Admin = require('../models/Admin.js');
 const User = require('../models/User.js');
 const Job = require('../models/Job.js');
+const Company = require('../models/Company.js');
+
+const allowedRoles = ['owner', 'master', 'moderator'];
+const timeFrameValues = ['this-month', 'this-week'];
 
 function divideMonthIntoParts() {
   // Get the current date
@@ -84,15 +88,12 @@ const divideWeekIntoParts = () => {
   return divisions;
 };
 
-const allowedRoles = ['owner', 'master', 'moderator'];
-const timeFrameValues = ['this-month', 'this-week'];
-
-const getCurrentWeekAnalyticsData = async () => {
+const getCurrentWeekAnalyticsData = async (model) => {
   let divisions = divideWeekIntoParts();
 
   divisions = await Promise.all(
     divisions.map(async (division) => {
-      const userSignupCount = await User.countDocuments({
+      const userSignupCount = await model.countDocuments({
         createdAt: { $gte: division.minDate, $lte: division.maxDate },
         isAccountActivated: true,
       });
@@ -108,12 +109,12 @@ const getCurrentWeekAnalyticsData = async () => {
   return divisions;
 };
 
-const getCurrentMonthAnalyticsData = async () => {
+const getCurrentMonthAnalyticsData = async (model) => {
   let divisions = divideMonthIntoParts();
 
   divisions = await Promise.all(
     divisions.map(async (division) => {
-      const userSignupCount = await User.countDocuments({
+      const userSignupCount = await model.countDocuments({
         createdAt: { $gte: division.minDate, $lte: division.maxDate },
         isAccountActivated: true,
       });
@@ -132,10 +133,24 @@ const getCurrentMonthAnalyticsData = async () => {
 const getUserAnalyticsData = async (timeFrame) => {
   try {
     if (timeFrame === 'this-month') {
-      const data = await getCurrentMonthAnalyticsData();
+      const data = await getCurrentMonthAnalyticsData(User);
       return data;
     } else {
-      const data = await getCurrentWeekAnalyticsData();
+      const data = await getCurrentWeekAnalyticsData(User);
+      return data;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getCompanyAnalyticsData = async (timeFrame) => {
+  try {
+    if (timeFrame === 'this-month') {
+      const data = await getCurrentMonthAnalyticsData(Company);
+      return data;
+    } else {
+      const data = await getCurrentWeekAnalyticsData(Company);
       return data;
     }
   } catch (error) {
@@ -722,4 +737,161 @@ module.exports.getUsersDashboard = asyncHandler(async (req, res, next) => {
   };
 
   return res.status(200).json({ data });
+});
+
+module.exports.getCompanies = asyncHandler(async (req, res, next) => {
+  const allowedParams = [
+    'page',
+    'limit',
+    'sort-by',
+    'sort-order',
+    'searchTerm',
+    'status',
+  ];
+  const query = req.query;
+
+  for (key in query) {
+    if (allowedParams.indexOf(key) === -1) {
+      return next(
+        new ErrorResponse(400, {
+          messageEn: `Invalid param: ${key}`,
+          messageGe: `Ungültiger Param: ${key}`,
+        })
+      );
+    }
+  }
+
+  const page = query.page ? parseInt(Math.abs(query.page)) : 1;
+  const limit = query.limit ? parseInt(Math.abs(query.limit)) : 10;
+  const skip = (page - 1) * limit;
+
+  const sort = { _id: -1 };
+
+  if (query['sort-by'] === 'job' && query['sort-order'] === 'ascending') {
+    delete sort._id;
+    sort['jobPostCount'] = 1;
+  }
+
+  if (query['sort-by'] === 'job' && query['sort-order'] === 'descending') {
+    delete sort._id;
+    sort['jobPostCount'] = -1;
+  }
+
+  if (query.searchTerm) {
+    const keyword = query.searchTerm;
+
+    query.$or = [
+      {
+        company_name: { $regex: keyword, $options: 'i' },
+      },
+    ];
+  }
+
+  delete query.limit;
+  delete query.page;
+  delete query['sort-by-age'];
+  delete query['sort-by-jobs'];
+
+  query.isAccountActivated = true;
+
+  let companies = await Company.find(query).sort(sort).skip(skip).limit(limit);
+  let totalCount = await Company.countDocuments(query);
+  return res.status(200).json({ companies, totalCount });
+});
+
+module.exports.getCompanyById = asyncHandler(async (req, res, next) => {
+  const companyId = req.params.companyId;
+
+  let company = await Company.findById(companyId);
+
+  return res.status(200).json(company);
+});
+
+module.exports.getCompanyJobs = asyncHandler(async (req, res, next) => {
+  const companyId = req.params.companyId;
+
+  const allowedParams = ['page', 'limit'];
+  const query = req.query;
+
+  for (key in query) {
+    if (allowedParams.indexOf(key) === -1) {
+      return next(
+        new ErrorResponse(400, {
+          messageEn: `Invalid param: ${key}`,
+          messageGe: `Ungültiger Param: ${key}`,
+        })
+      );
+    }
+  }
+
+  const page = query.page ? parseInt(Math.abs(query.page)) : 1;
+  const limit = query.limit ? parseInt(Math.abs(query.limit)) : 10;
+  const skip = (page - 1) * limit;
+
+  let jobs = await Job.find({
+    company: companyId,
+  })
+    .populate('applicants.profile', 'first_name last_name email photo')
+    .sort({ _id: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  let totalCount = await Job.countDocuments({
+    company: companyId,
+  });
+
+  return res.status(200).json({ jobs, totalCount });
+});
+
+module.exports.getCompaniesDashboard = asyncHandler(async (req, res, next) => {
+  const timeFrame = req.query.timeFrame || 'this-month';
+
+  if (timeFrameValues.indexOf(timeFrame) === -1) {
+    return next(
+      new ErrorResponse(400, {
+        messageEn: `Invalid value for timeFrame: ${timeFrame}`,
+        messageGe: `Ungültiger Wert für timeFrame: ${timeFrame}`,
+      })
+    );
+  }
+
+  const totalCompanyCount = await Company.countDocuments({
+    isAccountActivated: true,
+  });
+
+  const currentDate = new Date();
+  const totalCompanyCountForCurrentMonth = await Company.countDocuments({
+    isAccountActivated: true,
+    createdAt: {
+      $gte: startOfMonth(currentDate),
+      $lte: endOfMonth(currentDate),
+    },
+  });
+
+  const analyticsData = await getCompanyAnalyticsData(timeFrame);
+
+  const data = {
+    analyticsData: {
+      ...analyticsData,
+    },
+
+    totalCompanyCount: totalCompanyCount,
+    totalCompanyCountForCurrentMonth: totalCompanyCountForCurrentMonth,
+  };
+
+  return res.status(200).json({ data });
+});
+
+module.exports.verifyCompany = asyncHandler(async (req, res, next) => {
+  const { companyId } = req.body;
+
+  if (!companyId) {
+    return next(new ErrorResponse(400, { messageEn: 'companyId is required' }));
+  }
+
+  await Company.findByIdAndUpdate(companyId, { isAccountVerified: true });
+
+  return res.status(200).json({
+    success: true,
+  });
 });

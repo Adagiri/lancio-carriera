@@ -5,7 +5,7 @@ const CompanySchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  
+
   email: {
     type: String,
     required: true,
@@ -42,6 +42,16 @@ const CompanySchema = new mongoose.Schema({
   isAccountActivated: {
     type: Boolean,
     default: false,
+  },
+
+  isAccountVerified: {
+    type: Boolean,
+    default: false,
+  },
+
+  jobPostCount: {
+    type: Number,
+    default: 0,
   },
 
   isProfileSetupComplete: {

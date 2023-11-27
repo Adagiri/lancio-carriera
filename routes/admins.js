@@ -16,6 +16,11 @@ const {
   getUserById,
   getUserJobs,
   getUsersDashboard,
+  getCompanies,
+  getCompanyById,
+  getCompaniesDashboard,
+  getCompanyJobs,
+  verifyCompany,
 } = require('../controllers/admins.js');
 const { protectAdmin, authorize } = require('../middlewares/auth');
 const router = express.Router();
@@ -26,6 +31,13 @@ router.get('/users', protectAdmin, getUsers);
 router.get('/users/dashboard', protectAdmin, getUsersDashboard);
 router.get('/users/jobs/:userId', protectAdmin, getUserJobs);
 router.get('/users/:userId', protectAdmin, getUserById);
+
+router.get('/companies', protectAdmin, getCompanies);
+router.get('/companies/dashboard', protectAdmin, getCompaniesDashboard);
+router.get('/companies/jobs/:companyId', protectAdmin, getCompanyJobs);
+router.get('/companies/:companyId', protectAdmin, getCompanyById);
+router.put('/companies/verify', protectAdmin, verifyCompany)
+
 
 router.get('/:adminId', protectAdmin, getAdmin);
 

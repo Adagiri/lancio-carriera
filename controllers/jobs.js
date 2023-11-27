@@ -571,13 +571,27 @@ module.exports.getUserJobs = asyncHandler(async (req, res, next) => {
 
 module.exports.postJob = asyncHandler(async (req, res, next) => {
   const args = req.body;
-  // validate arguments
-  args.company = req.user.id;
+
+  const companyId = req.user.id;
+  args.company = companyId;
+
+  if (!req.user.isAccountVerified) {
+    return next(
+      new ErrorResponse(403, {
+        messageEn: 'Your account has not been verified',
+        messageGe: 'Ihr Konto wurde nicht verifiziert',
+      })
+    );
+  }
+
   let job = await Job.create(args);
 
   job = await Job.findById(job._id)
     .populate('company')
     .populate('applicants.profile');
+
+  // Increase the Job Post count
+  await Company.findByIdAndUpdate(req.user.id, { $inc: { jobPostCount: 1 } });
 
   await sendNotificationOnJobPosted(job);
 
