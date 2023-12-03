@@ -308,7 +308,6 @@ module.exports.sendResetPasswordEmailForAdmin = async (email, token) => {
   }
 };
 
-
 module.exports.sendWelcomeEmailForUser = async ({ first_name, email }) => {
   const message = `<!DOCTYPE html>
 <html lang="en">

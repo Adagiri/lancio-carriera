@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const {
   startOfMonth,
   endOfMonth,
@@ -11,7 +12,10 @@ const {
 const asyncHandler = require('../middlewares/async.js');
 
 const ErrorResponse = require('../utils/errorResponse.js');
-const { sendResetPasswordEmailForAdmin } = require('../utils/messages.js');
+const {
+  sendResetPasswordEmailForAdmin,
+  sendPersonalizedEmailToUser,
+} = require('../utils/messages.js');
 const {
   generateVerificationCode,
   getSignedJwtToken,
@@ -23,9 +27,11 @@ const Admin = require('../models/Admin.js');
 const User = require('../models/User.js');
 const Job = require('../models/Job.js');
 const Company = require('../models/Company.js');
+const UserNotification = require('../models/UserNotification.js');
+const CompanyNotification = require('../models/CompanyNotification.js');
 
 const allowedRoles = ['owner', 'master', 'moderator'];
-const timeFrameValues = ['this-month', 'this-week'];
+const timeFrameValues = ['this-month', 'this-week', 'all-time'];
 
 function divideMonthIntoParts() {
   // Get the current date
@@ -158,6 +164,85 @@ const getCompanyAnalyticsData = async (timeFrame) => {
   }
 };
 
+const getJobCurrentMonthAnalyticsData = async (model) => {
+  let divisions = divideMonthIntoParts();
+
+  divisions = await Promise.all(
+    divisions.map(async (division) => {
+      division.verifiedJobsCount = await model.countDocuments({
+        createdAt: { $gte: division.minDate, $lte: division.maxDate },
+        isVerified: true,
+      });
+
+      division.unverifiedJobsCount = await model.countDocuments({
+        createdAt: { $gte: division.minDate, $lte: division.maxDate },
+        isVerified: false,
+      });
+
+      division.totalJobCount =
+        division.verifiedJobsCount + division.unverifiedJobsCount;
+
+      division.reportedJobsCount = await model.countDocuments({
+        createdAt: { $gte: division.minDate, $lte: division.maxDate },
+        isReported: true,
+      });
+
+      delete division.minDate;
+      delete division.maxDate;
+
+      return division;
+    })
+  );
+
+  return divisions;
+};
+
+const getJobCurrentWeekAnalyticsData = async (model) => {
+  let divisions = divideWeekIntoParts();
+
+  divisions = await Promise.all(
+    divisions.map(async (division) => {
+      division.verifiedJobsCount = await model.countDocuments({
+        createdAt: { $gte: division.minDate, $lte: division.maxDate },
+        isVerified: true,
+      });
+
+      division.unverifiedJobsCount = await model.countDocuments({
+        createdAt: { $gte: division.minDate, $lte: division.maxDate },
+        isVerified: false,
+      });
+
+      division.totalJobCount =
+        division.verifiedJobsCount + division.unverifiedJobsCount;
+
+      division.reportedJobsCount = await model.countDocuments({
+        createdAt: { $gte: division.minDate, $lte: division.maxDate },
+        isReported: true,
+      });
+
+      delete division.minDate;
+      delete division.maxDate;
+
+      return division;
+    })
+  );
+
+  return divisions;
+};
+
+const getJobAnalyticsData = async (timeFrame) => {
+  try {
+    if (timeFrame === 'this-month') {
+      const data = await getJobCurrentMonthAnalyticsData(Job);
+      return data;
+    } else {
+      const data = await getJobCurrentWeekAnalyticsData(Job);
+      return data;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
 module.exports.register = asyncHandler(async (req, res, next) => {
   const validators = ['name', 'email', 'role', 'password'];
 
@@ -890,8 +975,245 @@ module.exports.verifyCompany = asyncHandler(async (req, res, next) => {
   }
 
   await Company.findByIdAndUpdate(companyId, { isAccountVerified: true });
+  await Job.updateMany({ company: companyId }, { isVerified: true });
 
   return res.status(200).json({
     success: true,
   });
+});
+
+module.exports.getJobs = asyncHandler(async (req, res, next) => {
+  const allowedParams = [
+    'page',
+    'limit',
+    'sort-by',
+    'sort-order',
+    'searchTerm',
+    'applicantsCount',
+  ];
+
+  const query = req.query;
+
+  for (key in query) {
+    if (allowedParams.indexOf(key) === -1) {
+      return next(
+        new ErrorResponse(400, {
+          messageEn: `Invalid param: ${key}`,
+          messageGe: `Ungültiger Param: ${key}`,
+        })
+      );
+    }
+  }
+
+  const page = query.page ? parseInt(Math.abs(query.page)) : 1;
+  const limit = query.limit ? parseInt(Math.abs(query.limit)) : 10;
+  const skip = (page - 1) * limit;
+
+  const sort = { _id: -1 };
+
+  if (
+    query['sort-by'] === 'applicantsCount' &&
+    query['sort-order'] === 'ascending'
+  ) {
+    delete sort._id;
+    sort['applicantsCount'] = 1;
+  }
+
+  if (
+    query['sort-by'] === 'applicantsCount' &&
+    query['sort-order'] === 'descending'
+  ) {
+    delete sort._id;
+    sort['applicantsCount'] = -1;
+  }
+
+  if (query.searchTerm) {
+    const keyword = query.searchTerm;
+
+    query.$or = [
+      {
+        position: { $regex: keyword, $options: 'i' },
+      },
+    ];
+  }
+
+  delete query.limit;
+  delete query.page;
+  delete query['sort-by-age'];
+  delete query['sort-by-jobs'];
+
+  let jobs = await Job.find(query)
+    .populate('company')
+    .populate('applicants.profile', 'first_name last_name email photo')
+    .sort(sort)
+    .skip(skip)
+    .limit(limit);
+  let totalCount = await Job.countDocuments(query);
+  return res.status(200).json({ jobs, totalCount });
+});
+
+module.exports.getJobById = asyncHandler(async (req, res, next) => {
+  const jobId = req.params.jobId;
+
+  let job = await Job.findById(jobId)
+    .populate('company')
+    .populate('applicants.profile', 'first_name last_name email photo');
+
+  job = job.toObject();
+
+  job.applicants.splice(3);
+
+  return res.status(200).json(job);
+});
+
+module.exports.getJobApplicants = asyncHandler(async (req, res, next) => {
+  const jobId = req.params.jobId;
+
+  let job = await Job.findById(jobId).populate(
+    'applicants.profile',
+    'first_name last_name email photo age country state city'
+  );
+
+  job = job.toObject();
+
+  const applicants = job.applicants;
+
+  return res.status(200).json({ applicants });
+});
+
+module.exports.getJobsDashboard = asyncHandler(async (req, res, next) => {
+  const timeFrame = req.query.timeFrame || 'this-month';
+
+  if (timeFrameValues.indexOf(timeFrame) === -1) {
+    return next(
+      new ErrorResponse(400, {
+        messageEn: `Invalid value for timeFrame: ${timeFrame}`,
+        messageGe: `Ungültiger Wert für timeFrame: ${timeFrame}`,
+      })
+    );
+  }
+
+  const currentDate = new Date();
+  const startOfMonthDate = startOfMonth(currentDate);
+  const startOfWeekDate = startOfWeek(currentDate);
+  const totalJobCount = await Job.countDocuments();
+
+  const currentMonthJobCount = await Job.countDocuments({
+    createdAt: { $gte: startOfMonthDate },
+  });
+
+  const currentWeekJobCount = await Job.countDocuments({
+    createdAt: { $gte: startOfWeekDate },
+  });
+
+  const analyticsData = await getJobAnalyticsData(timeFrame);
+
+  const data = {
+    totalJobCount: totalJobCount,
+    currentMonthJobCount: currentMonthJobCount,
+    currentWeekJobCount: currentWeekJobCount,
+    analyticsData,
+  };
+  return res.status(200).json({ data });
+});
+
+module.exports.deleteJob = asyncHandler(async (req, res, next) => {
+  const { jobId } = req.body;
+
+  if (!jobId) {
+    return next(new ErrorResponse(400, { messageEn: 'jobId is required' }));
+  }
+
+  const job = await Job.findById(jobId).populate('company', 'email');
+
+  if (!job) {
+    return next(
+      new ErrorResponse(404, {
+        messageEn: `Job with the ID: ${jobId} was not found`,
+        messageGe: `Job mit der ID: ${jobId} wurde nicht gefunden`,
+      })
+    );
+  }
+
+  const session = await mongoose.startSession();
+  await session.withTransaction(async () => {
+    await Job.findByIdAndDelete(jobId, { session });
+
+    await UserNotification.deleteMany(
+      { subject: jobId },
+      {
+        session,
+      }
+    );
+
+    await CompanyNotification.deleteMany(
+      { subject: jobId },
+      {
+        session,
+      }
+    );
+  });
+
+  session.endSession();
+
+  const subject = 'Stellenanzeige gelöscht';
+  const body = `Ihre Stellenanzeige mit dem Titel ${job.position} wurde von den App-Eigentümern gelöscht`;
+  const email = job.company.email;
+
+  await sendPersonalizedEmailToUser({ subject, body, email });
+  return res.status(200).json({
+    success: true,
+    job: job,
+  });
+});
+
+module.exports.getDashboardData = asyncHandler(async (req, res, next) => {
+  const timeFrame = req.query.timeFrame || 'all-time';
+
+  if (timeFrameValues.indexOf(timeFrame) === -1) {
+    return next(
+      new ErrorResponse(400, {
+        messageEn: `Invalid value for timeFrame: ${timeFrame}`,
+        messageGe: `Ungültiger Wert für timeFrame: ${timeFrame}`,
+      })
+    );
+  }
+
+  let timeLimit = new Date('2023-01-01');
+
+  const currentDate = new Date();
+  timeFrame === 'this-month' && (timeLimit = startOfMonth(currentDate));
+  timeFrame === 'this-week' && (timeLimit = startOfWeek(currentDate));
+
+  console.log(timeLimit)
+  const totalCompanyCount = await Company.countDocuments({
+    createdAt: { $gte: timeLimit },
+  });
+
+  const totalUserCount = await User.countDocuments({
+    createdAt: { $gte: timeLimit },
+  });
+
+  const totalJobCount = await Job.countDocuments({
+    createdAt: { $gte: timeLimit },
+  });
+
+  const latestJobs = await Job.find()
+    .populate('applicants.profile', 'first_name last_name photo')
+    .sort({ createdAt: -1 })
+    .limit(5);
+
+  const latestUsers = await User.find().limit(5);
+  const latestCompanies = await Company.find().limit(5);
+
+  const data = {
+    totalJobCount: totalJobCount,
+    totalUserCount: totalUserCount,
+    totalCompanyCount: totalCompanyCount,
+    latestJobs: latestJobs,
+    latestUsers: latestUsers,
+    latestCompanies: latestCompanies,
+  };
+
+  return res.status(200).json({ data });
 });

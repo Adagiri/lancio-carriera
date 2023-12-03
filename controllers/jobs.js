@@ -248,6 +248,7 @@ module.exports.getJobListings = asyncHandler(async (req, res, next) => {
   }
   location && (filter.location = location);
   filter.applicantsCount = { $gte: minApplicantCount, $lte: maxApplicantCount };
+  filter.isVerified = true;
 
   delete filter.limit;
   delete filter.cursor;
@@ -575,14 +576,8 @@ module.exports.postJob = asyncHandler(async (req, res, next) => {
   const companyId = req.user.id;
   args.company = companyId;
 
-  if (!req.user.isAccountVerified) {
-    return next(
-      new ErrorResponse(403, {
-        messageEn: 'Your account has not been verified',
-        messageGe: 'Ihr Konto wurde nicht verifiziert',
-      })
-    );
-  }
+  // If the company is a verified user, then the job should be tagged as verfied
+  req.user.isAccountVerified && (args.isVerified = true);
 
   let job = await Job.create(args);
 
@@ -773,7 +768,7 @@ module.exports.reportJob = asyncHandler(async (req, res, next) => {
       })
     );
   }
-
+  job.isReported = true;
   job.reportedBy.push(userId);
   await job.save();
 
