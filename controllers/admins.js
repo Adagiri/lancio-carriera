@@ -916,7 +916,7 @@ module.exports.getCompanyJobs = asyncHandler(async (req, res, next) => {
   let jobs = await Job.find({
     company: companyId,
   })
-    .populate('applicants.profile', 'first_name last_name email photo')
+    .populate('applicants.profile')
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limit);
@@ -1044,7 +1044,7 @@ module.exports.getJobs = asyncHandler(async (req, res, next) => {
 
   let jobs = await Job.find(query)
     .populate('company')
-    .populate('applicants.profile', 'first_name last_name email photo')
+    .populate('applicants.profile')
     .sort(sort)
     .skip(skip)
     .limit(limit);
@@ -1057,7 +1057,7 @@ module.exports.getJobById = asyncHandler(async (req, res, next) => {
 
   let job = await Job.findById(jobId)
     .populate('company')
-    .populate('applicants.profile', 'first_name last_name email photo');
+    .populate('applicants.profile');
 
   job = job.toObject();
 
