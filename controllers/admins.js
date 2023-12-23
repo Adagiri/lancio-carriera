@@ -921,6 +921,7 @@ module.exports.getCompanyJobs = asyncHandler(async (req, res, next) => {
     .skip(skip)
     .limit(limit);
 
+
   let totalCount = await Job.countDocuments({
     company: companyId,
   });
@@ -1185,7 +1186,7 @@ module.exports.getDashboardData = asyncHandler(async (req, res, next) => {
   timeFrame === 'this-month' && (timeLimit = startOfMonth(currentDate));
   timeFrame === 'this-week' && (timeLimit = startOfWeek(currentDate));
 
-  console.log(timeLimit)
+  console.log(timeLimit);
   const totalCompanyCount = await Company.countDocuments({
     createdAt: { $gte: timeLimit },
   });

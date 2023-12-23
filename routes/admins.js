@@ -41,7 +41,7 @@ router.get('/users/:userId', protectAdmin, getUserById);
 
 router.get('/companies', protectAdmin, getCompanies);
 router.get('/companies/dashboard', protectAdmin, getCompaniesDashboard);
-router.get('/companies/jobs/:companyId', protectAdmin, getCompanyJobs);
+router.get('/companies/:companyId/jobs', protectAdmin, getCompanyJobs);
 router.get('/companies/:companyId', protectAdmin, getCompanyById);
 router.put('/companies/verify', protectAdmin, verifyCompany);
 
