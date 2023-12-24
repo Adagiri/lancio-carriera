@@ -1200,7 +1200,7 @@ module.exports.getDashboardData = asyncHandler(async (req, res, next) => {
   });
 
   const latestJobs = await Job.find()
-    .populate('applicants.profile', 'first_name last_name photo')
+    .populate('applicants.profile', 'first_name last_name photo').populate('company', 'company_name')
     .sort({ createdAt: -1 })
     .limit(5);
 
